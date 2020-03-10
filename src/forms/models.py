@@ -1,0 +1,25 @@
+from django.db import models
+from employees.models import Profile, Role
+from teams.models import Team
+from workflows.models import Workflow
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# Create your models here.
+
+class FormBlueprint(models.Model):
+    """ Represents a form blueprint """
+
+    workflow = models.OneToOneField(Workflow, on_delete = models.CASCADE)
+
+    def __str__(self):
+        return "FB for {}".format(self.workflow.title)
+
+
+
+@receiver(post_save, sender=Workflow)
+def update_workflow_form(sender, instance, created, **kwargs):
+    if created:
+        FormBlueprint.objects.create(workflow=instance)
+    instance.formblueprint.save()

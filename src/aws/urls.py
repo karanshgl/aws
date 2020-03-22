@@ -17,11 +17,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import home
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    # path('login/', auth_views.login, name='login'),
+    # path('logout/', auth_views.logout, name='logout'),
     path('admin/', admin.site.urls),
     path('employee/', include('employees.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('forms/', include('forms.urls')),
+    path('', home, name='home')
 ]
 
 

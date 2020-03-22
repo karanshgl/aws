@@ -7,10 +7,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
+from employees.models import Profile
+
 
 class FormBlueprint(models.Model):
     """ Represents a form blueprint """
-
+    #creator of the form is captured in the workflow....
     workflow = models.OneToOneField(Workflow, on_delete = models.CASCADE)
 
     def __str__(self):

@@ -1,7 +1,7 @@
 from django.urls import path, include
-from .views import dashboard, create
+from .views import dashboard, fb_edit
 
 urlpatterns = [
 	path('dashboard/', dashboard, name='forms_dashboard'),
-	path('create/', create, name='forms_create')
+	path('fb_edit/<int:fb_id>', fb_edit, name='forms_blueprint_edit')
 ]

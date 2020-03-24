@@ -2,6 +2,42 @@
 
 {% block header %}
     <title>AWS | Forms | Dashboard</title>
+    <style>
+        table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
+        tr:nth-child(even) {
+        background-color: #dddddd;
+        }
+
+        a:link {
+        color: black;
+        }
+
+        /* visited link */
+        a:visited {
+        color: black;
+        }
+
+        /* mouse over link */
+        a:hover {
+        color: black;
+        }
+
+        /* selected link */
+        a:active {
+        color: black;
+        }
+    </style>
 {%endblock%}
 
 {% block content %}
@@ -10,6 +46,35 @@
         <div class='jumbotron'>
             <h5><strong>Welcome to the Automated Workflow System - Forms Dashboard Page</strong></h5>
         </div>
+        <br><br>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Workflow</th>
+                <th>Creator</th>
+                <th>Active</th>
+                <th>Edit</th>
+                <th>Create Instance</th>
+            </tr>
+            {% for fb in form_blueprints %}
+                <tr>
+                    <td>{{ fb.title }}</td>
+                    <td>{{ fb.workflow.title  }}</td>
+                    <td>{{ fb.workflow.creator }}</td>
+                    <td>{{ fb.active }}</td>
+                    <td>
+                        {% ifequal fb.workflow.creator user.profile %}
+                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_edit' fb_id=fb.id %}">Edit</a></button>
+                        {% else %}
+                            <button type="button" class="btn btn-xs disabled">Edit</button>
+                        {% endifequal %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Create Instance</a></button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
     <div class='col-md-1'></div>
 

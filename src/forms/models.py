@@ -13,7 +13,9 @@ from employees.models import Profile
 class FormBlueprint(models.Model):
     """ Represents a form blueprint """
     #creator of the form is captured in the workflow....
+    title = models.CharField(max_length=128)
     workflow = models.OneToOneField(Workflow, on_delete = models.CASCADE)
+    active = models.BooleanField(default=False)
 
     def __str__(self):
         return "FB for {}".format(self.workflow.title)

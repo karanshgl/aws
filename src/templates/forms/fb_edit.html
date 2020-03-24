@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block header %}
+    <title>AWS | Forms | Create </title>
+    <script src="{% static 'forms/create.js' %}"></script> 
+{%endblock%}
+
+{% block content %}
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='jumbotron'>
+            <h5><strong>Welcome to the Automated Workflow System - Forms Create Page</strong></h5>
+        </div>
+        {% comment %} add section button {% endcomment %}
+        <button class='btn ' id='add_section'>Add Section</button>
+        
+        <br><br><br><br>
+        {% comment %} create a form for adding a field which then invokes the js function {% endcomment %}
+        <form name='add_field_form' id='add_field_form' >
+            {% comment %} dropdown for selecting the type of field {% endcomment %}
+            <label for="type_of_field">Type: </label>
+            <select id="type_of_field">
+                <option value="strng">String</option>
+                <option value="intgr">Integer</option>
+                <option value="mcq_single">Multiple Choice Single Select</option>
+                <option value="mcq_multi">Multiple Choice Multiple Select</option>
+                <option value="fl">File Upload</option>
+            </select>
+            <br><br>
+
+            {% comment %} title of the field {% endcomment %}
+            <label for="title_of_field">Title: </label>
+            <input type="text" id="title_of_field" name="title_of_field">
+            <br><br>
+
+            {% comment %} required field or not {% endcomment %}
+            <label class="switch">Required:
+            <input id='required_field' name='required_field' type="checkbox">
+            <span class="slider round"></span>
+            </label>
+            <br><br>
+
+
+            <input id ='submit_add_field' class='btn' type='submit' value='Add Field'>
+        </form>
+        <br><br><br>
+        {% comment %} this is the actual dynamic form object {% endcomment %}
+        <form name='dynamic-form' id='dynamic-form'>
+        
+        </form>
+    </div>
+    <div class='col-md-1'></div>
+
+{%endblock%}

@@ -24,8 +24,8 @@
             <select id="type_of_field">
                 <option value="strng">String</option>
                 <option value="intgr">Integer</option>
-                <option value="mcq_single">Multiple Choice Single Select</option>
-                <option value="mcq_multi">Multiple Choice Multiple Select</option>
+                <option value="mcqs">Multiple Choice Single Select</option>
+                <option value="mcqm">Multiple Choice Multiple Select</option>
                 <option value="fl">File Upload</option>
             </select>
             <br><br>
@@ -42,10 +42,20 @@
             </label>
             <br><br>
 
-
+            {% comment %}the submit button for the add field form  {% endcomment %}
             <input id ='submit_add_field' class='btn' type='submit' value='Add Field'>
         </form>
-        <br><br><br>
+        {% comment %} <br><br><br> {% endcomment %}
+        {% comment %} Here add the div for mcqs, mcqm and fl type fields{% endcomment %}
+        <div id='optional_div'>
+            <form id='add_option_form'>
+                <label for='option_text'>Add Option: </label>
+                <input type='text' id='option_text'>
+                <input class='btn' type='submit'  value='Add Option'>
+            </form>
+        </div>
+        {% comment %} the optional div ends here {% endcomment %}
+        <br><br>
         {% comment %} this is the actual dynamic form object {% endcomment %}
         <form name='dynamic-form' id='dynamic-form'>
         

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+<script src="{% static 'workflow/create.js' %}"></script>
+{%endblock%}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <form method="POST" id = "workflow_form">
+        	{% csrf_token %}
+            <div id="node_list">
+                <div class="col-4" id="headNode">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Node 1</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <input type="text" name="node_1_role" placeholder="Role" required="True">
+                            <input type="text" name="node_1_team" placeholder="Team">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="btnAddNode" type="button">ADD</button>
+            <button id ="btnSubmit" type="button">CREATE</button>
+        </form>
+    </div>
+</div>
+{%endblock%}
+{% block footer %}
+{%endblock%}

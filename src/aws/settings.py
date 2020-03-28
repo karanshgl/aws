@@ -41,7 +41,12 @@ INSTALLED_APPS = [
     'employees',
     'teams',
     'workflows',
-    'forms'
+    'forms',
+    # THIRD PARTY
+    'rest_framework',
+    'crispy_forms',
+    'django_extensions',
+    'django_filters',   
 ]
 
 MIDDLEWARE = [

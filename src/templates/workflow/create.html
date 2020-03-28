@@ -2,12 +2,48 @@
 {% load static %}
 {% block header %}
 <script src="{% static 'workflow/create.js' %}"></script>
+<script type="text/javascript" src={% static "js/autocomplete.js" %}></script>
+<style type="text/css">
+.select {
+    float: right;
+}
+
+.autocomplete-suggestions {
+    border: 1px solid #999;
+    background: #FFF;
+    overflow: auto;
+}
+
+.autocomplete-suggestion {
+    padding: 2px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.autocomplete-selected {
+    background: #F0F0F0;
+}
+
+.autocomplete-suggestions strong {
+    font-weight: normal;
+    color: #3399FF;
+}
+
+.autocomplete-group {
+    padding: 2px 5px;
+}
+
+.autocomplete-group strong {
+    display: block;
+    border-bottom: 1px solid #000;
+}
+</style>
 {%endblock%}
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        <form method="POST" id = "workflow_form">
-        	{% csrf_token %}
+        <form method="POST" id="workflow_form">
+            {% csrf_token %}
             <div id="node_list">
                 <div class="col-4" id="headNode">
                     <div class="card" style="width: 18rem;">
@@ -21,10 +57,62 @@
                 </div>
             </div>
             <button id="btnAddNode" type="button">ADD</button>
-            <button id ="btnSubmit" type="button">CREATE</button>
+            <button id="btnSubmit" type="button">CREATE</button>
         </form>
     </div>
 </div>
 {%endblock%}
 {% block footer %}
+<script type="text/javascript">
+$(document).ready(function() {
+    // Use delegate function for dynamic objects
+    $(document).on('click', 'input[name$=_role]', function(){
+    
+    $(this).autocomplete({
+        serviceUrl: '/employee/api/role/',
+        paramName: 'search',
+        transformResult: function(response) {
+            response = JSON.parse(response);
+            return {
+                suggestions: $.map(response, function(dataItem) {
+                    return { value: dataItem.role_name};
+                })
+            };
+        },
+
+        onSelect: function(suggestion) {
+            // alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+            $(this).val(suggestion.value);
+
+        },
+        showNoSuggestionNotice: true,
+        noSuggestionNotice: 'Sorry, no matching results'
+    });
+    });
+
+    $(document).on('click', 'input[name$=_team]', function(){
+    
+    $(this).autocomplete({
+        serviceUrl: '/teams/api/team/',
+        paramName: 'search',
+        transformResult: function(response) {
+            response = JSON.parse(response);
+            return {
+                suggestions: $.map(response, function(dataItem) {
+                    return { value: dataItem.team_name};
+                })
+            };
+        },
+
+        onSelect: function(suggestion) {
+            // alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+            $(this).val(suggestion.value);
+
+        },
+        showNoSuggestionNotice: true,
+        noSuggestionNotice: 'Sorry, no matching results'
+    });
+    });
+});
+</script>
 {%endblock%}

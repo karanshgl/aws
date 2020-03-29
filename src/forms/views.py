@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from .forms import FormBlueprintForm
 from .models import FormBlueprint
+
 
 # Create your views here.
 @login_required
@@ -26,3 +27,9 @@ def fb_edit(request, fb_id):#fb is for form blueprint
         'fb_object': fb_object,
     }
     return render(request, 'forms/fb_edit.html', context=context)
+
+def fb_create(request):
+    print(request)
+    print(request.POST['fb'])
+
+    return HttpResponse('Successfull')

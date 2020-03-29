@@ -1,8 +1,74 @@
+class FormBlueprint{
+    constructor(id){
+        this.id=id;
+        this.sections = new Array();
+    }
+
+    // get id(){
+    //     return this.id;
+    // }
+
+    // get sections(){
+    //     return this.sections;
+    // }
+
+    addSection(section){
+        this.sections.push(section);
+    }
+}
+//the Field class
+class Field{
+    constructor(type, title, required){
+        this.type = type;
+        this.title = title;
+        this.required = required;
+        this.options = new Array();
+    }
+
+    // get type(){
+    //     return this.type;
+    // }
+    // get title(){
+    //     return this.title;
+    // }
+    // get required(){
+    //     return this.required;
+    // }
+    // get options(){
+    //     return this.options;
+    // }
+
+    addOption(option){
+        this.options.push(option);
+    }
+}
+//the Section class
+class Section{
+    constructor(id){
+        this.id = id;
+        this.fields = new Array();
+    }
+
+    // get id(){
+    //     return this.id;
+    // }
+
+    // get fields(){
+    //     return this.fields;
+    // }
+
+    addField(field){
+        this.fields.push(field);
+    }
+}
+
 $(document).ready(function(){
 
+    //the section the user is adding fields to right now
     let curr_section = 0;
 
-    let curr_field = 0;//the current question number in a section
+    //create the form object
+    let fb = new FormBlueprint(1);
 
     //utility function to convert ID to selector
     function removeWhitespace(text){
@@ -21,6 +87,11 @@ $(document).ready(function(){
     function addSection(){
         curr_section+=1;
         $("#dynamic-form").append("<section id='section_"+String(curr_section)+"'><h4>Section "+curr_section+"</h4></section>");
+    
+        //add the section in the form object as well
+        let section = new Section(curr_section);
+        fb.addSection(section);
+
     }
 
     //function for adding a string field to the dynamic form
@@ -34,8 +105,13 @@ $(document).ready(function(){
             input_html = "<input type='text' id='"+field_id+"' required='required'><br>";
         else
             input_html = "<input type='text' id='"+field_id+"'><br>";
-        
+
         $(section_selector).append(label_html+input_html);
+
+        //create the field object for JS object
+        let field = new Field('strng', title, required);
+        //add this field to the section
+        fb.sections[curr_section-1].addField(field);
     }
     //this function is called when the user adds an integer field to the form
     function addIntgrField(title, required){
@@ -48,8 +124,11 @@ $(document).ready(function(){
             input_html = "<input type='number' id='"+field_id+"' required='required'><br>";
         else
             input_html = "<input type='number' id='"+field_id+"'><br>";
-        
         $(section_selector).append(label_html+input_html);
+        //create the field object for JS object
+        let field = new Field('intgr', title, required);
+        //add this field to the section
+        fb.sections[curr_section-1].addField(field);
     }
     //this function is called when the user adds a file field
     function addFLField(title, required){
@@ -62,17 +141,26 @@ $(document).ready(function(){
             input_html = "<input type='file' id='"+field_id+"' required='required'><br>";
         else
             input_html = "<input type='file' id='"+field_id+"'><br>";
- 
+
         $(section_selector).append(label_html+input_html);
+        //create the field object for JS object
+        let field = new Field('fl', title, required);
+        //add this field to the section
+        fb.sections[curr_section-1].addField(field);
     }
     //this function is called when the user adds a mcqs field to the form
-    function addMCQSField(title){
+    function addMCQSField(title, required){
         section_id = getCurrSectionID();
         section_selector = getSelectorByID(section_id);
         let field_id = section_id+"_"+removeWhitespace(title)+'_mcqs';
         //means add p element as a question
         let p_html = "<div id='"+field_id+"'><p>"+title+"</p></div>";
         $(section_selector).append(p_html);
+
+        //create the field object for JS object
+        let field = new Field('mcqs', title, required);
+        //add this field to the section
+        fb.sections[curr_section-1].addField(field);
     }
     //this function is called when an option is to be added to the mcqs field
     function addMCQSOption(title, option, required){
@@ -94,16 +182,23 @@ $(document).ready(function(){
             option_html="<label><input type='radio' name='"+option_name+"' value='"+option+"' >"+option+"</label><br>";
         }
         $(getSelectorByID(field_id)).append(option_html);
+        //add the option
+        fb.sections[curr_section-1].fields[fb.sections[curr_section-1].fields.length-1].addOption(option);
     }
 
     //this function is called when the user adds a mcqm field to the form
-    function addMCQMField(title){
+    function addMCQMField(title, required){
         section_id = getCurrSectionID();
         section_selector = getSelectorByID(section_id);
         let field_id = section_id+"_"+removeWhitespace(title)+'_mcqm';
         //means add p element as a question
         let p_html = "<div id='"+field_id+"'><p>"+title+"</p></div>";
         $(section_selector).append(p_html);
+
+        //create the field object for JS object
+        let field = new Field('mcqm', title, required);
+        //add this field to the section
+        fb.sections[curr_section-1].addField(field);
     }
 
     //this function is called when an option is to be added to the mcqs field
@@ -125,6 +220,8 @@ $(document).ready(function(){
             option_html="<label><input type='checkbox' name='"+option_name+"' value='"+option+"' >"+option+"</label><br>";
         }
         $(getSelectorByID(field_id)).append(option_html);
+        //add the option
+        fb.sections[curr_section-1].fields[fb.sections[curr_section-1].fields.length-1].addOption(option);
     }
 
     $("#add_section").click(function(){
@@ -152,8 +249,6 @@ $(document).ready(function(){
     
         // alert("Submitted");
     
-        
-        
         //check if the user has added any sections at all
         if(curr_section==0) {
             alert('Add a section first');
@@ -173,11 +268,11 @@ $(document).ready(function(){
         }
         //if field type is mcqs....
         else if(selected=='mcqs'){
-            addMCQSField(title);
+            addMCQSField(title, required);
         }
         //if field type is mcqmple...
         else if(selected=='mcqm'){
-            addMCQMField(title);
+            addMCQMField(title, required);
         }
         //if field type is file upload...
         else if(selected=='fl'){
@@ -203,6 +298,31 @@ $(document).ready(function(){
         else if(selected=='mcqm')addMCQMOption(title, option, required);
         else throw "Error: Select MCQ type field to add option";
         event.preventDefault();
+    });
+
+    //functions dealing with POSTing the data to the server
+    $('#log_btn').click(function(){
+        let json = JSON.stringify(fb);
+        console.log(json);
+
+
+        $.ajax({
+            beforeSend: function(request) {
+                let csrftoken = Cookies.get('csrftoken');
+                console.log(csrftoken);
+                request.setRequestHeader('X-CSRFToken', csrftoken);
+            },
+            type: "POST",
+            url: "/forms/fb_create/",
+            data: {
+                'fb': json, // from form
+            },
+            success: function () {
+                alert('Request Sent Successfully');
+            }
+
+        });
+
     });
 
 });

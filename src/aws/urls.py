@@ -27,7 +27,10 @@ urlpatterns = [
     path('employee/', include('employees.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('forms/', include('forms.urls')),
-    path('', home, name='home')
+    path('teams/', include('teams.urls')),
+    path('workflows/', include('workflows.urls')),
+    path('', home, name='home'),
+    path('api-auth/', include('rest_framework.urls')),
 ]
 
 

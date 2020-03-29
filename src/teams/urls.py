@@ -1,10 +1,9 @@
 from django.urls import path, include
-from .views import dashboard
 
 from rest_framework.routers import DefaultRouter
-from .api import RoleViewSet
+from .api import TeamViewSet
 router = DefaultRouter()
-router.register(r'role', RoleViewSet)
+router.register(r'team', TeamViewSet)
 
 
 urlpatterns = [

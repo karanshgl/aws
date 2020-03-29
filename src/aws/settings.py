@@ -41,7 +41,12 @@ INSTALLED_APPS = [
     'employees',
     'teams',
     'workflows',
-    'forms'
+    'forms',
+    # THIRD PARTY
+    'rest_framework',
+    'crispy_forms',
+    'django_extensions',
+    'django_filters',   
 ]
 
 MIDDLEWARE = [
@@ -107,6 +112,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
 
 
 # Internationalization

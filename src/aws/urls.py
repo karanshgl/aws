@@ -30,7 +30,10 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('forms/', include('forms.urls')),
     url(r'^signup/$', signup, name='signup'),
-    path('', home, name='home')
+    path('teams/', include('teams.urls')),
+    path('workflows/', include('workflows.urls')),
+    path('', home, name='home'),
+    path('api-auth/', include('rest_framework.urls')),
 ]
 
 

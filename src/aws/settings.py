@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'forms',
     # THIRD PARTY
     'rest_framework',
-    'crispy_forms',
+    #'crispy_forms',
     'django_extensions',
     'django_filters',   
 ]

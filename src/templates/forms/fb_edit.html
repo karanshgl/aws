@@ -6,6 +6,10 @@
     <title>AWS | Forms | Create </title>
     <script src="{% static 'forms/create.js' %}"></script> 
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+
+    <script>
+        let fb_id = parseInt("{{ fb_object.pk }}");
+    </script>
 {%endblock%}
 
 {% block content %}

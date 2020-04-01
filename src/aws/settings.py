@@ -95,6 +95,9 @@ DATABASES = {
 }
 
 
+MONGO_IP = 'localhost'
+MONGO_PORT =27017
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 

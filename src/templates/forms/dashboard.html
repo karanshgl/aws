@@ -54,6 +54,7 @@
                 <th>Creator</th>
                 <th>Active</th>
                 <th>Edit</th>
+                <th>Preview</th>
                 <th>Create Instance</th>
             </tr>
             {% for fb in form_blueprints %}
@@ -68,6 +69,9 @@
                         {% else %}
                             <button type="button" class="btn btn-xs disabled">Edit</button>
                         {% endifequal %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_preview' fb_id=fb.id %}">Preview</a></button>
                     </td>
                     <td>
                         <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Create Instance</a></button>

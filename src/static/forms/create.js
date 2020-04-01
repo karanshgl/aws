@@ -4,13 +4,6 @@ class FormBlueprint{
         this.sections = new Array();
     }
 
-    // get id(){
-    //     return this.id;
-    // }
-
-    // get sections(){
-    //     return this.sections;
-    // }
 
     addSection(section){
         this.sections.push(section);
@@ -18,26 +11,15 @@ class FormBlueprint{
 }
 //the Field class
 class Field{
-    constructor(type, title, required){
+    constructor(id, type, title, required){
+        this.id = id;
         this.type = type;
         this.title = title;
         this.required = required;
         this.options = new Array();
     }
 
-    // get type(){
-    //     return this.type;
-    // }
-    // get title(){
-    //     return this.title;
-    // }
-    // get required(){
-    //     return this.required;
-    // }
-    // get options(){
-    //     return this.options;
-    // }
-
+    
     addOption(option){
         this.options.push(option);
     }
@@ -49,16 +31,16 @@ class Section{
         this.fields = new Array();
     }
 
-    // get id(){
-    //     return this.id;
-    // }
-
-    // get fields(){
-    //     return this.fields;
-    // }
 
     addField(field){
         this.fields.push(field);
+    }
+}
+
+class Option{
+    constructor(name, value){
+        this.name = name;
+        this.value = value;
     }
 }
 
@@ -68,7 +50,7 @@ $(document).ready(function(){
     let curr_section = 0;
 
     //create the form object
-    let fb = new FormBlueprint(1);
+    let fb = new FormBlueprint(fb_id);
 
     //utility function to convert ID to selector
     function removeWhitespace(text){
@@ -89,7 +71,7 @@ $(document).ready(function(){
         $("#dynamic-form").append("<section id='section_"+String(curr_section)+"'><h4>Section "+curr_section+"</h4></section>");
     
         //add the section in the form object as well
-        let section = new Section(curr_section);
+        let section = new Section('section_'+String(curr_section));
         fb.addSection(section);
 
     }
@@ -109,7 +91,7 @@ $(document).ready(function(){
         $(section_selector).append(label_html+input_html);
 
         //create the field object for JS object
-        let field = new Field('strng', title, required);
+        let field = new Field(field_id, 'strng', title, required);
         //add this field to the section
         fb.sections[curr_section-1].addField(field);
     }
@@ -126,7 +108,7 @@ $(document).ready(function(){
             input_html = "<input type='number' id='"+field_id+"'><br>";
         $(section_selector).append(label_html+input_html);
         //create the field object for JS object
-        let field = new Field('intgr', title, required);
+        let field = new Field(field_id, 'intgr', title, required);
         //add this field to the section
         fb.sections[curr_section-1].addField(field);
     }
@@ -144,7 +126,7 @@ $(document).ready(function(){
 
         $(section_selector).append(label_html+input_html);
         //create the field object for JS object
-        let field = new Field('fl', title, required);
+        let field = new Field(field_id, 'fl', title, required);
         //add this field to the section
         fb.sections[curr_section-1].addField(field);
     }
@@ -158,7 +140,7 @@ $(document).ready(function(){
         $(section_selector).append(p_html);
 
         //create the field object for JS object
-        let field = new Field('mcqs', title, required);
+        let field = new Field(field_id, 'mcqs', title, required);
         //add this field to the section
         fb.sections[curr_section-1].addField(field);
     }
@@ -182,8 +164,10 @@ $(document).ready(function(){
             option_html="<label><input type='radio' name='"+option_name+"' value='"+option+"' >"+option+"</label><br>";
         }
         $(getSelectorByID(field_id)).append(option_html);
+        
+        let _option = new Option(option_name, option);
         //add the option
-        fb.sections[curr_section-1].fields[fb.sections[curr_section-1].fields.length-1].addOption(option);
+        fb.sections[curr_section-1].fields[fb.sections[curr_section-1].fields.length-1].addOption(_option);
     }
 
     //this function is called when the user adds a mcqm field to the form
@@ -196,7 +180,7 @@ $(document).ready(function(){
         $(section_selector).append(p_html);
 
         //create the field object for JS object
-        let field = new Field('mcqm', title, required);
+        let field = new Field(field_id, 'mcqm', title, required);
         //add this field to the section
         fb.sections[curr_section-1].addField(field);
     }
@@ -221,7 +205,8 @@ $(document).ready(function(){
         }
         $(getSelectorByID(field_id)).append(option_html);
         //add the option
-        fb.sections[curr_section-1].fields[fb.sections[curr_section-1].fields.length-1].addOption(option);
+        let _option = new Option(option_name, option);
+        fb.sections[curr_section-1].fields[fb.sections[curr_section-1].fields.length-1].addOption(_option);
     }
 
     $("#add_section").click(function(){
@@ -309,16 +294,18 @@ $(document).ready(function(){
         $.ajax({
             beforeSend: function(request) {
                 let csrftoken = Cookies.get('csrftoken');
-                console.log(csrftoken);
+                // console.log(csrftoken);
                 request.setRequestHeader('X-CSRFToken', csrftoken);
             },
             type: "POST",
             url: "/forms/fb_create/",
+            // datatype:'json',
+            // contentType: 'application/json; charset=utf-8',
             data: {
-                'fb': json, // from form
+                'fb': json, 
             },
             success: function () {
-                alert('Request Sent Successfully');
+                alert('Form Blueprint Saved Successfully');
             }
 
         });

@@ -2,6 +2,16 @@
 {% load static %}
 {% block header %}
 <script src="{% static 'workflow/create.js' %}"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+<!-- <script type="text/javascript">
+    $(document).ready(function() {
+        
+        $("#SelRole").select2({
+
+        });
+    });
+</script> -->
 <script type="text/javascript" src={% static "js/autocomplete.js" %}></script>
 <style type="text/css">
 .select {
@@ -51,8 +61,18 @@
                         <div class="card-body">
                             <h5 class="card-title">Node 1</h5>
                             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <input type="text" name="node_1_role" placeholder="Role" required="True">
-                            <input type="text" name="node_1_team" placeholder="Team">
+                            <select type="text" name="node_1_role" width="200 px;" placeholder="Select Role" data-search="true" required="True" id="node_1_role" >
+                                {%for item in role_list%}
+                                <option value="{{ item }}">{{item}}</option>
+                                print({{ item }})
+                                {% endfor %}
+                            </select>  
+                            <select name="node_1_team" width="200" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
+                                <option value="None">None</option>
+                                {%for item in team_list%}
+                                <option value="{{ item }}">{{item}}</option>
+                                {% endfor %}
+                            </select>  
                         </div>
                     </div>
                 </div>
@@ -64,7 +84,7 @@
 </div>
 {%endblock%}
 {% block footer %}
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
     // Use delegate function for dynamic objects
     $(document).on('click', 'input[name$=_role]', function(){
@@ -115,5 +135,5 @@ $(document).ready(function() {
     });
     });
 });
-</script>
+</script> -->
 {%endblock%}

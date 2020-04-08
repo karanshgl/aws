@@ -68,7 +68,7 @@ $(document).ready(function(){
     //function for adding a section in the form
     function addSection(){
         curr_section+=1;
-        $("#dynamic-form").append("<section id='section_"+String(curr_section)+"'><h4>Section "+curr_section+"</h4></section>");
+        $("#dynamic-form").append("<div class='card'><div class='card-header'><h4>Section "+curr_section+"</h4></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section></div></div><br>");
     
         //add the section in the form object as well
         let section = new Section('section_'+String(curr_section));
@@ -81,14 +81,16 @@ $(document).ready(function(){
         section_id = getCurrSectionID();
         section_selector = getSelectorByID(section_id);
         let field_id = section_id+"_"+removeWhitespace(title)+'_strng';
-        let label_html = "<p>"+title+":  </p>";
+        let header_html = "<div class='form-group>"
+        let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
         let input_html="";
         if (required==true)
-            input_html = "<input type='text' id='"+field_id+"' required='required'><br>";
+            input_html = "<input class='form-control' type='text' id='"+field_id+"' required='required'><br>";
         else
-            input_html = "<input type='text' id='"+field_id+"'><br>";
+            input_html = "<input class='form-control' type='text' id='"+field_id+"'><br>";
+        let tail_html = "</div>"
 
-        $(section_selector).append(label_html+input_html);
+        $(section_selector).append(header_html+label_html+input_html+tail_html);
 
         //create the field object for JS object
         let field = new Field(field_id, 'strng', title, required);
@@ -100,13 +102,16 @@ $(document).ready(function(){
         section_id = getCurrSectionID();
         section_selector = getSelectorByID(section_id);
         let field_id = section_id+"_"+removeWhitespace(title)+'_intgr';
-        let label_html = "<p>"+title+":  </p>";
+        let header_html = "<div class='form-group>"
+        let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
         let input_html="";
         if (required==true)
-            input_html = "<input type='number' id='"+field_id+"' required='required'><br>";
+            input_html = "<input class='form-control' type='number' id='"+field_id+"' required='required'><br>";
         else
-            input_html = "<input type='number' id='"+field_id+"'><br>";
-        $(section_selector).append(label_html+input_html);
+            input_html = "<input class='form-control' type='number' id='"+field_id+"'><br>";
+        let tail_html = "</div>"
+
+        $(section_selector).append(header_html+label_html+input_html+tail_html);
         //create the field object for JS object
         let field = new Field(field_id, 'intgr', title, required);
         //add this field to the section
@@ -217,12 +222,16 @@ $(document).ready(function(){
         let selected = $( "#type_of_field option:selected" ).val();
         //if field is of type strng 
         if(selected==='strng' || selected=='intgr' || selected=='file'){
-            $(getSelectorByID('optional_div')).hide();
+            // $(getSelectorByID('optional_div')).hide();
+            //disable the add_option button
+            $("#add_option_button").prop("disabled", true);
         }
 
         //if field is of type mcqs....the we need to change the div
         else if (selected==='mcqs' || selected=='mcqm'){
-            $(getSelectorByID('optional_div')).show();
+            // $(getSelectorByID('optional_div')).show();
+            //enable the add_option button
+            $("#add_option_button").prop("disabled", false);
         }
     });
 

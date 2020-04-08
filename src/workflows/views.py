@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.db import transaction
+import collections
 
 # GET MODELS
 from .models import Workflow, Node
@@ -16,13 +17,42 @@ def create_workflow(request):
 	if request.method == 'POST':
 		form_data = request.POST
 		print(form_data)
+		form_values_list = list(form_data.values())
+		values_length = len(form_values_list)
+
+		# CREATING DICT FOR ROLE-TEAM PAIR
+		roles = []
+		teams = []
+		j = 2
+		while j < (values_length - 1):
+			if (j % 2) == 0:
+				roles.append(form_values_list[j])
+			else:
+				teams.append(form_values_list[j])
+			j += 1
+
+		merged_list = tuple(zip(roles, teams))
+		nested_merged_list = []
+
+		for pair in merged_list:
+		    a = []
+		    a.append(tuple(pair))
+		    nested_merged_list.append(a)
+
+		output = collections.defaultdict(int)
+		for elem in nested_merged_list:
+			output[elem[0]] += 1
+
 		count = int(form_data['count'][0])
-		print(form_data)
 		title = form_data['title']
 		user = Profile.objects.get(user = request.user)
 
 		try:
 			with transaction.atomic():
+				# CHECK FOR LOOP IN WORKFLOW
+				for i in output.values():
+					if i > 1:
+						raise ValueError('Loop is present in the workflow')
 				# CREATE WORKFLOW
 				workflow = Workflow(creator = user, title = title)
 				workflow.save()
@@ -46,21 +76,17 @@ def create_workflow(request):
 
 			return HttpResponse('Success')
 
+		except ValueError as err:
+			print(err)
+			return HttpResponse('Fail - Loop present')
+
 		except Exception as e:
 			print(e)
 			return HttpResponse('Fail')
- 
-	#making a list of roles and teams for rendering in searchable dropdown
-	total_number_of_roles=Role.objects.count()
-	role_list=[]
-	for i in range (0,total_number_of_roles):
-		role_list.append(Role.objects.get(id=i+1))						#TODO : check impact of inactive roles on this list
-	
-	total_number_of_teams=Team.objects.count()
-	team_list=[]
-	for i in range (0,total_number_of_teams):
-		team_list.append(Team.objects.get(id=i+1))
 
+	#making a list of roles and teams for rendering in searchable dropdown
+	role_list=list(Role.objects.all())
+	team_list=list(Team.objects.all())
 
 	context={
 		"role_list":role_list,
@@ -69,4 +95,3 @@ def create_workflow(request):
 
 
 	return render(request, 'workflow/create.html',context)
-

@@ -20,9 +20,9 @@
         </button>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active"><a class="nav-link" href="#">Home</a></li>
+                <li class="nav-item active"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'forms_dashboard' %}">Forms</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Workflows</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'create_workflow' %}">Workflows</a></li>
                 {% if user.is_authenticated %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">{{ user.username }}</a></li>

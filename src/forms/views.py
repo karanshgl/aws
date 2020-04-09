@@ -46,7 +46,7 @@ def fb_create(request):
         _fb_id = collection.insert_one(fb).inserted_id
         client.close()
 
-    return HttpResponse('Successfull')\
+    return HttpResponse('Successfull')
 
 @login_required
 def fb_preview(request, fb_id):

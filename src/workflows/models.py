@@ -27,3 +27,16 @@ class Workflow(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_flow(self):
+        # Returns the nodes in the workflow
+        head = Node.objects.get(prev_node = None, workflow = self)
+        workflow_nodes = [head]
+        cur = head.next_node
+        # Loop through the nodes
+        while cur:
+            workflow_nodes.append(cur)
+            cur = cur.next_node
+
+        return workflow_nodes
+

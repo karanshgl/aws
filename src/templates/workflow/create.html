@@ -51,12 +51,13 @@
 {%endblock%}
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
+    
         <form method="POST" id="workflow_form">
             {% csrf_token %}
             <input type="text" name="title" placeholder="Title">
-            <div id="node_list">
-                <div class="col-4" id="headNode">
+            <div id="node_list" class="row">
+
+                <div class="col-2" id="headNode">
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
                             <h5 class="card-title">Node 1</h5>
@@ -80,7 +81,6 @@
             <button id="btnAddNode" type="button">ADD</button>
             <button id="btnSubmit" type="button">CREATE</button>
         </form>
-    </div>
 </div>
 {%endblock%}
 {% block footer %}

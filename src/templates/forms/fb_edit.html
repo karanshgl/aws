@@ -13,8 +13,9 @@
 {%endblock%}
 
 {% block content %}
-
+    
     {% comment %} row containing the jumbotron heading {% endcomment %}
+    
     <div class='row'>
         <div class='col-md-1'></div>
         <div class='col-md-10'>
@@ -25,7 +26,29 @@
         <div class='col-md-1'></div>
     </div>
     {% comment %} row containing the jumbotron heaidng ends here {% endcomment %}
+    <div class="container-fluid"> 
+    
+        <div id="node_list">
+            <div class="row">
+            {% for node in workflow_nodes %}
 
+                <div class="col-2">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Node {{ forloop.counter }}</h5>
+                            <p class="card-text"></p>
+                                Role: {{node.assosiated_role}}
+                                | Team: {{node.assosiated_team}}
+                            
+                        </div>
+                    </div>
+                </div>
+            
+        {% endfor %}
+        </div>
+    </div>
+    <hr>
+    </div>
 
     {% comment %} row containg the form editing options begins here  {% endcomment %}
     <div class='row'>

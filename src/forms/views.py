@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from .forms import FormBlueprintForm
 from .models import FormBlueprint
+from workflows.models import Workflow
 import json
 import pymongo
 from pymongo import MongoClient
@@ -23,6 +24,7 @@ def dashboard(request):
 @login_required
 def fb_edit(request, fb_id):#fb is for form blueprint
     fb_object = FormBlueprint.objects.get(pk=fb_id)
+    workflow = Workflow.objects.get(formblueprint = fb_object)
     #check if the creator is the one currently logged in
     if request.user.profile!=fb_object.workflow.creator:
         context={
@@ -38,6 +40,7 @@ def fb_edit(request, fb_id):#fb is for form blueprint
         return render(request, 'message.html', context=context)
     context = {
         'fb_object': fb_object,
+        'workflow_nodes': workflow.get_flow(),
     }
     return render(request, 'forms/fb_edit.html', context=context)
 

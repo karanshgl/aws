@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.db import transaction
@@ -74,7 +74,7 @@ def create_workflow(request):
 
 					prev = cur_node
 
-			return HttpResponse('Success')
+			return redirect('forms_blueprint_edit', fb_id = workflow.formblueprint.id)
 
 		except ValueError as err:
 			print(err)

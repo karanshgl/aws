@@ -41,6 +41,7 @@
 {%endblock%}
 
 {% block content %}
+    <div class='row'>
     <div class='col-md-1'></div>
     <div class='col-md-10'>
         <div class='jumbotron'>
@@ -50,36 +51,52 @@
         <table>
             <tr>
                 <th>Title</th>
-                <th>Workflow</th>
+                {% comment %} <th>Workflow</th> {% endcomment %}
                 <th>Creator</th>
                 <th>Active</th>
                 <th>Edit</th>
                 <th>Preview</th>
                 <th>Create Instance</th>
+                <th>Toggle Activation</th>
             </tr>
             {% for fb in form_blueprints %}
                 <tr>
-                    <td>{{ fb.title }}</td>
+                    {% comment %} <td>{{ fb.title }}</td> {% endcomment %}
                     <td>{{ fb.workflow.title  }}</td>
                     <td>{{ fb.workflow.creator }}</td>
                     <td>{{ fb.active }}</td>
                     <td>
                         {% ifequal fb.workflow.creator user.profile %}
-                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_edit' fb_id=fb.id %}">Edit</a></button>
+                            {% if fb.saved %}
+                                <button type="button" class="btn btn-success btn-xs disabled">Edit</button>
+                            {%else%}
+                                <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_edit' fb_id=fb.id %}">Edit</a></button>
+                            {% endif %}
                         {% else %}
-                            <button type="button" class="btn btn-xs disabled">Edit</button>
+                            <button type="button" class="btn btn-xs btn-success disabled">Edit</button>
                         {% endifequal %}
                     </td>
                     <td>
-                        <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_preview' fb_id=fb.id %}">Preview</a></button>
+                        {% if fb.saved %}
+                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_preview' fb_id=fb.id %}">Preview</a></button>
+                        {%else%}
+                            <button type="button" class="btn btn-success btn-xs" disabled><a href="{% url 'forms_blueprint_preview' fb_id=fb.id %}">Preview</a></button>
+                        {%endif%}
                     </td>
                     <td>
                         <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Create Instance</a></button>
+                    </td>
+                    <td>
+                        {% ifequal fb.workflow.creator user.profile %}
+                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_toggle_activation' fb_id=fb.id %}">Toggle Activation</a></button>
+                        {%else%}
+                            <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Toggle Activation</a></button>
+                        {%endifequal%}
                     </td>
                 </tr>
             {% endfor %}
         </table>
     </div>
     <div class='col-md-1'></div>
-
+    </div>
 {%endblock%}

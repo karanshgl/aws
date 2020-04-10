@@ -1,10 +1,11 @@
 $(document).ready(function() {
-    
-    var template = $("#headNode");
+
+    var template = $("#cloneIt");
     const template_clone=template.clone();
     //console.log(template)
 	// Base Variables
     var node_count = 1;
+    var headNode = "div[id='node_1_head'";
     var baseTitle = ".card-title";
     var baseInputRole = "select[name='node_1_role'";
     var baseInputTeam = "select[name='node_1_team'";
@@ -21,7 +22,7 @@ $(document).ready(function() {
         return s;
     };
 
-    
+
     $("#node_1_role").select2({  //giving searchable feature to dropdown
 
     });
@@ -34,7 +35,7 @@ $(document).ready(function() {
 
 
         node_count = node_count + 1;
-        
+
 
         var new_node = template_clone.clone();
 
@@ -44,6 +45,7 @@ $(document).ready(function() {
         new_node.find(baseInputRole).attr("name", "node_{0}_role".f(node_count));
         //new_node.find(baseInputRole).attr("class", "");
         new_node.find(baseInputTeam).attr("name", "node_{0}_team".f(node_count));
+        new_node.find(headNode).attr("id", "node_{0}_head".f(node_count));
         new_node.find(baseInputRoleId).attr("id", "node_{0}_role".f(node_count));
         new_node.find(baseInputTeamId).attr("id", "node_{0}_team".f(node_count));
 
@@ -64,4 +66,12 @@ $(document).ready(function() {
     	var hidden_input = "<input type = 'hidden' name = 'count' value = '{0}'>".f(node_count);
     	form.append(hidden_input).submit();
     });
+
+    $("#btnDeleteNode").click(function() {
+      if(node_count > 1){
+        $("#node_{0}_head".f(node_count)).remove();
+        node_count = node_count - 1;
+      }
+    });
+
 });

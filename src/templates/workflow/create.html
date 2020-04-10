@@ -6,7 +6,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
 <!-- <script type="text/javascript">
     $(document).ready(function() {
-        
+
         $("#SelRole").select2({
 
         });
@@ -51,37 +51,41 @@
 {%endblock%}
 {% block content %}
 <div class="container-fluid">
-    
+
         <form method="POST" id="workflow_form">
             {% csrf_token %}
-            <input type="text" name="title" placeholder="Title">
+            <input type="text" name="title" placeholder="Title" required>
             <div id="node_list" class="row">
-
-                <div class="col-2" id="headNode">
+              <div id="cloneIt">
+                <div class="col-2" id="node_1_head" name="node_1_head">
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
                             <h5 class="card-title">Node 1</h5>
-                            <p>Select Role</p>
-                            <select type="text" name="node_1_role" style="width: 14rem;" placeholder="Select Role" data-search="true" required="True" id="node_1_role" >
+                            <p class="card-text">Please select a <strong>role</strong> and its <strong>team</strong>:</p>
+                            <label for="roles">Role : </label><br>
+                            <select type="text" name="node_1_role" width="200 px;" placeholder="Select Role" data-search="true" required="True" id="node_1_role" >
                                 {%for item in role_list%}
                                 <option value="{{ item }}">{{item}}</option>
                                 print({{ item }})
                                 {% endfor %}
-                            </select>  
-                            <br></br>
-                            <p>Select Team</p>
-                            <select name="node_1_team" style="width: 14rem;" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
+
+                            </select>
+                            <label for="teams">Team : </label><br>
+                            <select name="node_1_team" width="200" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
+                            </select>
                                 <option value="None">None</option>
                                 {%for item in team_list%}
                                 <option value="{{ item }}">{{item}}</option>
                                 {% endfor %}
-                            </select>  
+                            </select>
                         </div>
                     </div>
                 </div>
+              </div>
             </div>
             <button id="btnAddNode" type="button">ADD</button>
             <button id="btnSubmit" type="button">CREATE</button>
+            <button id="btnDeleteNode" type="button">Delete</button>
         </form>
 </div>
 {%endblock%}
@@ -90,7 +94,7 @@
 $(document).ready(function() {
     // Use delegate function for dynamic objects
     $(document).on('click', 'input[name$=_role]', function(){
-    
+
     $(this).autocomplete({
         serviceUrl: '/employee/api/role/',
         paramName: 'search',
@@ -114,7 +118,7 @@ $(document).ready(function() {
     });
 
     $(document).on('click', 'input[name$=_team]', function(){
-    
+
     $(this).autocomplete({
         serviceUrl: '/teams/api/team/',
         paramName: 'search',

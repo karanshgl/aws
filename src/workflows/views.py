@@ -24,15 +24,18 @@ def create_workflow(request):
 		roles = []
 		teams = []
 		j = 2
+		k = 3
 		while j < (values_length - 1):
-			if (j % 2) == 0:
+			if form_values_list[k] != 'None':
 				roles.append(form_values_list[j])
-			else:
-				teams.append(form_values_list[j])
-			j += 1
-
+				teams.append(form_values_list[j+1])
+			j += 2
+			k += 2
 		merged_list = tuple(zip(roles, teams))
 		nested_merged_list = []
+
+		print('roles', roles)
+		print('teams', teams)
 
 		for pair in merged_list:
 		    a = []
@@ -53,6 +56,11 @@ def create_workflow(request):
 				for i in output.values():
 					if i > 1:
 						raise ValueError('Loop is present in the workflow')
+
+				# CHECK IF HEAD IS EMPLOYEE AND IT DOES NOT BELONGS ANY TEAM
+				if roles[0].lower() == 'employee' and teams[0] != 'None':
+					raise ValueError('Employee should not belong to any team')
+
 				# CREATE WORKFLOW
 				workflow = Workflow(creator = user, title = title)
 				workflow.save()
@@ -78,7 +86,7 @@ def create_workflow(request):
 
 		except ValueError as err:
 			print(err)
-			return HttpResponse('Fail - Loop present')
+			return HttpResponse('Fail - ' + str(err))
 
 		except Exception as e:
 			print(e)

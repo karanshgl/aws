@@ -1,7 +1,7 @@
 from django.db import models
 from employees.models import Profile, Role
 from teams.models import Team
-from workflows.models import Workflow
+from workflows.models import Workflow, Node
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -55,3 +55,32 @@ def update_workflow_form(sender, instance, created, **kwargs):
         fb.create_collection()
 
     instance.formblueprint.save()
+
+
+
+class FormInstance(models.Model):
+
+    blueprint = models.ForeignKey(FormBlueprint, on_delete = models.CASCADE, null = False)
+    current_node = models.ForeignKey(Node, on_delete = models.CASCADE, null = False)
+    sender = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False)
+    active = models.BooleanField(default=False)
+
+
+    def get_collection(self):
+        # Returns the blueprint from MONGO
+        client = MongoClient(settings.MONGO_IP, settings.MONGO_PORT)
+        db = client.aws_database
+        collection = db.form_instances_collection
+        _fb = collection.find_one({'id': self.id})
+        client.close()
+        return _fb
+
+    def create_collection(self):
+        # Creates a collection in MONGO
+        client = MongoClient(settings.MONGO_IP, settings.MONGO_PORT)
+        db = client.aws_database
+        collection = db.form_instances_collection
+        _fb = collection.insert_one({'id': self.id})
+        client.close()
+
+

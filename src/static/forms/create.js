@@ -1,3 +1,4 @@
+
 class FormBlueprint{
     constructor(id){
         this.id=id;
@@ -25,8 +26,10 @@ class Field{
 }
 //the Section class
 class Section{
-    constructor(id){
+    constructor(id,role,team){
         this.id = id;
+        this.role=role;
+        this.team=team;
         this.fields = new Array();
     }
 
@@ -44,7 +47,9 @@ class Option{
 }
 
 $(document).ready(function(){
+    $("#section_node").select2({
 
+    });
     //the section the user is adding fields to right now
     let curr_section = 0;
 
@@ -73,11 +78,14 @@ $(document).ready(function(){
 
     //function for adding a section in the form
     function addSection(){
+        var temp=$("#section_node")
+        temp=temp.val()
+        temp= JSON5.parse(temp)
         curr_section+=1;
         $("#dynamic-form").append("<div class='card'><div class='card-header'><h4>Section "+curr_section+"</h4></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section></div></div><br>");
     
         //add the section in the form object as well
-        let section = new Section('section_'+String(curr_section));
+        let section = new Section('section_'+String(curr_section),temp['role'],temp['team']);
         fb.addSection(section);
 
     }

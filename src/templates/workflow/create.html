@@ -12,8 +12,8 @@
         });
     });
 </script> -->
-<script type="text/javascript" src={% static "js/autocomplete.js" %}></script>
-<style type="text/css">
+<!-- <script type="text/javascript" src={% static "js/autocomplete.js" %}></script> -->
+<!-- <style type="text/css">
 .select {
     float: right;
 }
@@ -47,7 +47,7 @@
     display: block;
     border-bottom: 1px solid #000;
 }
-</style>
+</style> -->
 {%endblock%}
 {% block content %}
 <div class="container-fluid">
@@ -68,9 +68,11 @@
                                 <option value="{{ item }}">{{item}}</option>
                                 print({{ item }})
                                 {% endfor %}
+
                             </select>
                             <label for="teams">Team : </label><br>
                             <select name="node_1_team" width="200" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
+                            </select>
                                 <option value="None">None</option>
                                 {%for item in team_list%}
                                 <option value="{{ item }}">{{item}}</option>

@@ -12,8 +12,8 @@
         });
     });
 </script> -->
-<script type="text/javascript" src={% static "js/autocomplete.js" %}></script>
-<style type="text/css">
+<!-- <script type="text/javascript" src={% static "js/autocomplete.js" %}></script> -->
+<!-- <style type="text/css">
 .select {
     float: right;
 }
@@ -47,7 +47,7 @@
     display: block;
     border-bottom: 1px solid #000;
 }
-</style>
+</style> -->
 {%endblock%}
 {% block content %}
 <div class="container-fluid">
@@ -61,14 +61,16 @@
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
                             <h5 class="card-title">Node 1</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <select type="text" name="node_1_role" width="200 px;" placeholder="Select Role" data-search="true" required="True" id="node_1_role" >
+                            <p>Select Role</p>
+                            <select type="text" name="node_1_role" style="width: 14rem;" placeholder="Select Role" data-search="true" required="True" id="node_1_role" >
                                 {%for item in role_list%}
                                 <option value="{{ item }}">{{item}}</option>
                                 print({{ item }})
                                 {% endfor %}
                             </select>  
-                            <select name="node_1_team" width="200" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
+                            <br></br>
+                            <p>Select Team</p>
+                            <select name="node_1_team" style="width: 14rem;" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
                                 <option value="None">None</option>
                                 {%for item in team_list%}
                                 <option value="{{ item }}">{{item}}</option>

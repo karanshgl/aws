@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import dashboard, fb_edit, fb_create, fb_preview, fb_toggle_activation
+from .views import dashboard, fb_edit, fb_create, fb_preview, fb_toggle_activation, fi_create
 
 urlpatterns = [
 	path('dashboard/', dashboard, name='forms_blueprint_dashboard'),
@@ -7,4 +7,5 @@ urlpatterns = [
 	path('fb_preview/<int:fb_id>', fb_preview, name='forms_blueprint_preview'),
 	path('fb_create/', fb_create, name='forms_blueprint_create'),
 	path('fb_toggle_activation/<int:fb_id>', fb_toggle_activation, name='forms_blueprint_toggle_activation'),
+	path('fi_create/<int:fb_id>', fi_create, name='form_instance_create'),
 ]

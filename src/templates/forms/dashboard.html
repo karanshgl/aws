@@ -68,7 +68,7 @@
                     <td>
                         {% ifequal fb.workflow.creator user.profile %}
                             {% if fb.saved %}
-                                <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_create'%}">Create</a></button>
+                                <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Edit</a></button>
                             {%else%}
                                 <button type="button" class="btn btn-success btn-xs"><a href="{% url 'forms_blueprint_edit' fb_id=fb.id %}">Edit</a></button>
                             {% endif %}

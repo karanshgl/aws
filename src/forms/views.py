@@ -10,7 +10,7 @@ from pymongo import MongoClient
 from django.conf import settings
 import datetime
 
-from .FormBlueprintParser import *
+
 
 
 # Create your views here.
@@ -65,17 +65,18 @@ def fb_toggle_activation(request, fb_id):#fb is for form blueprint
 def fb_create(request):
     if request.method=='POST':
         fb = dict(json.loads(request.POST['fb']))#fb is the form_blueprint
-        print(fb)
-        fb["date"]= datetime.datetime.now()
-        client = MongoClient(settings.MONGO_IP, settings.MONGO_PORT)
-        db = client.aws_database
-        collection = db.form_blueprints_collection
-        _fb_id = collection.insert_one(fb).inserted_id
-        client.close()
+        fb_object = FormBlueprint.objects.get(id=fb["id"])
+
+        if fb_object.saved==True:
+            context={
+                'title': 'Unauthorised Access',
+                'message': 'Unauthorised Access: A form blueprint once saved cannot be edited'
+            }
+        fb_object.update_document(fb)
+
         #mark form as saved
-        _fb = FormBlueprint.objects.get(pk=fb["id"])
-        _fb.saved = True
-        _fb.save()
+        fb_object.saved = True
+        fb_object.save()
 
     return HttpResponse('Successfull')
 
@@ -89,15 +90,34 @@ def fb_preview(request, fb_id):
         }
         return render(request, 'message.html', context=context)
     #get the form blueprint from mongo and parse it to html then pass return the view
-    client = MongoClient(settings.MONGO_IP, settings.MONGO_PORT)
-    db = client.aws_database
-    collection = db.form_blueprints_collection
-    _fb = collection.find_one({'id': fb_id})
-    client.close()
-    fb_parser = FormBlueprintParser()
-    html=fb_parser.parse(_fb)
-    
+    preview_html = fb_object.fetch_preview_html()
+
     context = {
-        'html':html
+        'preview_html':preview_html
     }
     return render(request, 'forms/fb_preview.html', context = context)
+
+@login_required
+def fi_create(request, fb_id):
+    #get the section of the form relevant to this person and render that section
+    #for now assuming that it is the first section which is relevant for creation of the form
+    fb_object = FormBlueprint.objects.get(id=fb_id)
+    section_id = 1
+    section_html, node_id = fb_object.fetch_section_html(section_id)
+    if request.method=="POST":
+        #save the  instance in MONGO in the relevant collection
+        data = dict(request.POST)
+        del data['csrfmiddlewaretoken']
+        fb_object.create_instance(data)
+        return HttpResponse("Form Instance Created")
+    else:
+        #add the form html tag and the submit button to the section html
+        context = {
+            'section_html':section_html
+        }
+        return render(request, 'forms/fi_create.html', context = context)
+
+
+@login_required
+def fi_respond(request):
+    pass

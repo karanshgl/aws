@@ -26,9 +26,10 @@ class Field{
 }
 //the Section class
 class Section{
-    constructor(id,role,team){
+    constructor(id,role,team, node_id){
         this.id = id;
         this.role=role;
+        this.node_id = node_id;
         this.team=team;
         this.fields = new Array();
     }
@@ -85,7 +86,7 @@ $(document).ready(function(){
         $("#dynamic-form").append("<div class='card'><div class='card-header'><h4>Section "+curr_section+"</h4></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section></div></div><br>");
     
         //add the section in the form object as well
-        let section = new Section('section_'+String(curr_section),temp['role'],temp['team']);
+        let section = new Section('section_'+String(curr_section),temp['role'],temp['team'], temp['node_id']);
         fb.addSection(section);
 
     }

@@ -60,7 +60,7 @@
             <p>Select node for the section to be added</p>
             <select type="text" name="section_node" style="width: 10rem;"  id="section_node" >
                 {% for node in workflow_nodes %}
-                <option value="{'role': '{{node.assosiated_role}}' , 'team': '{{node.assosiated_team}}' }">{{ forloop.counter }}</option>
+                <option value="{'role': '{{node.assosiated_role}}' , 'team': '{{node.assosiated_team}}', 'node_id': {{node.id}} }">{{ forloop.counter }}</option>
                 {% endfor %}
             </select>  
             {% comment %} add section button {% endcomment %}

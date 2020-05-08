@@ -190,32 +190,32 @@ LOGGING = {
             'maxBytes': 10485760,
         },
     },
-    'loggers': {
-        '': {
-            # The root logger is always defined as an empty string and will pick up all logging that is not collected
-            # by a more specific logger below
-            'handlers': ['console', 'mail_admins', 'file'],
-            'level': os.getenv('ROOT_LOG_LEVEL', 'INFO'),
-        },
-        'django': {
-            # The 'django' logger is configured by Django out of the box. Here, it is reconfigured in order to
-            # utilize the file logger and allow configuration at runtime
-            'handlers': ['console', 'mail_admins', 'file'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-            'propagate': False,
-        },
-        'django.server': {
-            'propagate': True,
-        },
-        'django.security.DisallowedHost': {
-            'propagate': False,
-            'level': 'ERROR',
-        },
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
+    # 'loggers': {
+    #     '': {
+    #         # The root logger is always defined as an empty string and will pick up all logging that is not collected
+    #         # by a more specific logger below
+    #         'handlers': ['console', 'mail_admins', 'file'],
+    #         'level': os.getenv('ROOT_LOG_LEVEL', 'INFO'),
+    #     },
+    #     'django': {
+    #         # The 'django' logger is configured by Django out of the box. Here, it is reconfigured in order to
+    #         # utilize the file logger and allow configuration at runtime
+    #         'handlers': ['console', 'mail_admins', 'file'],
+    #         'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+    #         'propagate': False,
+    #     },
+    #     'django.server': {
+    #         'propagate': True,
+    #     },
+    #     'django.security.DisallowedHost': {
+    #         'propagate': False,
+    #         'level': 'ERROR',
+    #     },
+    #     'django.db.backends': {
+    #         'handlers': ['console'],
+    #         'level': 'DEBUG',
+    #     },
+    # },
 }
 
 def exception_hook(type, value, traceback):

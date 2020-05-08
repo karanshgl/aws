@@ -2,6 +2,14 @@ class FormBlueprintParser:
     def __init__(self):
         self.html = "";
 
+    def parse_section(self, dic, section_id):
+        """
+        args:
+            section_id: is one-indexed
+        """
+        _section = dic['sections'][section_id-1]
+        return self._parse_section(_section), _section['node_id']
+
     def parse(self, dic):
         _html = "<div class='container'><div class='row'><div class='col-md-1'></div><div class='col-md-10'><div class='jumbotron'><h4>Form Preview</h4></div></div><div class='col-md-1'></div></div>"
         _html+="<div class='row'><div class='col-md-1'></div><div class='col-md-10'>"
@@ -14,7 +22,7 @@ class FormBlueprintParser:
 
     def _parse_section(self, section):
         _id = section['id'].split('_')[-1]
-        _section_html = "<section class='card' id='"+_id+"'>"
+        _section_html = "<section class='card' id='section_"+_id+"'>"
         _section_html +="<div class='card-header'><h4>Section "+_id+"</h4></div><div class='card-body'>"
         for _field in section['fields']:
             # print(_field['id'])
@@ -37,9 +45,9 @@ class FormBlueprintParser:
         _field_html = "<div class='form-group'>"
         _field_html += "<label for='"+_field_id+"'>"+field['title']+"</label>";
         if field['required']==True:
-            _field_html += "<input class='form-control' type='text' id='"+_field_id+"' required='required'><br>"
+            _field_html += "<input class='form-control' type='text' id='"+_field_id+"' name='"+_field_id+"' required='required'><br>"
         else:
-            _field_html += "<input class='form-control' type='text' id='"+_field_id+"'><br>"
+            _field_html += "<input class='form-control' type='text' id='"+_field_id+"' name='"+_field_id+"'><br>"
         _field_html+='</div>'
         return _field_html
 
@@ -49,9 +57,9 @@ class FormBlueprintParser:
         _field_html = "<div class='form-group'>"
         _field_html += "<label for='"+_field_id+"'>"+field['title']+"</label>";
         if field['required']==True:
-            _field_html += "<input class='form-control' type='number' id='"+_field_id+"' required='required'><br>"
+            _field_html += "<input class='form-control' type='number' id='"+_field_id+"' name='"+_field_id+"' required='required'><br>"
         else:
-            _field_html += "<input class='form-control' type='number' id='"+_field_id+"'><br>"
+            _field_html += "<input class='form-control' type='number' id='"+_field_id+"' name='"+_field_id+"' ><br>"
         _field_html+='</div>'
         return _field_html
 
@@ -61,9 +69,9 @@ class FormBlueprintParser:
         _field_html = "<div class='form-group'>"
         _field_html += "<label for='"+_field_id+"'>"+_field['title']+"</label>";
         if _field['required']==True:
-            _field_html += "<input class='form-file' type='file' id='"+_field_id+"' required='required'><br>"
+            _field_html += "<input class='form-file' type='file' id='"+_field_id+"' name='"+_field_id+"'  required='required'><br>"
         else:
-            _field_html += "<input class='form-file' type='file' id='"+_field_id+"'><br>"
+            _field_html += "<input class='form-file' type='file' id='"+_field_id+"' name='"+_field_id+"' ><br>"
         _field_html+='</div>'
         return _field_html
 

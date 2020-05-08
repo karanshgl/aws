@@ -5,7 +5,7 @@ from employees.models import Profile, Role
 class Team(models.Model):
     """ Represents a team in an organization """
     team_name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
-    parent = models.ForeignKey('Team', on_delete = models.SET_NULL, null = True) # TODO uncomment this
+    parent = models.ForeignKey('Team', on_delete = models.SET_NULL, null = True, blank = True) # TODO uncomment this
 
     def __str__(self):
         return self.team_name

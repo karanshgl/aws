@@ -4,16 +4,10 @@
 
 {% block header %}
     <title>AWS | Forms | Preview </title>
-    {% comment %} <script src="{% static 'forms/create.js' %}"></script>  {% endcomment %}
-    {% comment %} <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script> {% endcomment %}
-
-    <script>
-        let fb_id = parseInt("{{ fb_object.pk }}");
-    </script>
 {%endblock%}
 
 {% block content %}
 
-    {{ html |safe }}
+    {{ preview_html |safe }}
 
 {%endblock%}

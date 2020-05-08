@@ -7,10 +7,10 @@ from teams.models import Team
 
 class Node(models.Model):
     """ Represents a node of a workflow """
-    next_node = models.ForeignKey('Node', on_delete = models.SET_NULL, null = True, related_name = 'next')
-    prev_node = models.ForeignKey('Node', on_delete = models.CASCADE, null = True, related_name = 'prev') # If HEAD is deleted, deleted them all
+    next_node = models.ForeignKey('Node', on_delete = models.SET_NULL, null = True, related_name = 'next', blank=True)
+    prev_node = models.ForeignKey('Node', on_delete = models.CASCADE, null = True, related_name = 'prev', blank=True) # If HEAD is deleted, deleted them all
     assosiated_role = models.ForeignKey(Role, on_delete = models.CASCADE, null = False)
-    assosiated_team = models.ForeignKey(Team, on_delete = models.SET_NULL, null = True)
+    assosiated_team = models.ForeignKey(Team, on_delete = models.SET_NULL, null = True, blank=True)
 
     # Workflow it belongs to
     workflow = models.ForeignKey('Workflow', on_delete = models.CASCADE, null = False) # If no workflow, no node

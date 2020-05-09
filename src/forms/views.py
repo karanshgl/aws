@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from .forms import FormBlueprintForm
-from .models import FormBlueprint
-from workflows.models import Workflow
+from .models import FormBlueprint, FormInstance
+from workflows.models import Workflow, Node
 import json
 import pymongo
 from pymongo import MongoClient
@@ -11,15 +11,13 @@ from django.conf import settings
 import datetime
 
 
-
-
 # Create your views here.
 @login_required
-def dashboard(request):
+def fb_all(request):
     context ={
         'form_blueprints':FormBlueprint.objects.all()
     }
-    return render(request, 'forms/dashboard.html', context=context)
+    return render(request, 'forms/fb_all.html', context=context)
 
 @login_required
 def fb_edit(request, fb_id):#fb is for form blueprint
@@ -72,6 +70,7 @@ def fb_create(request):
                 'title': 'Unauthorised Access',
                 'message': 'Unauthorised Access: A form blueprint once saved cannot be edited'
             }
+            return render(request, 'message.html', context=context)
         fb_object.update_document(fb)
 
         #mark form as saved
@@ -100,15 +99,24 @@ def fb_preview(request, fb_id):
 @login_required
 def fi_create(request, fb_id):
     #get the section of the form relevant to this person and render that section
-    #for now assuming that it is the first section which is relevant for creation of the form
     fb_object = FormBlueprint.objects.get(id=fb_id)
+    #for now assuming that it is the first section which is relevant for creation of the form
     section_id = 1
     section_html, node_id = fb_object.fetch_section_html(section_id)
+
+    node_object = Node.objects.get(id=node_id)
+
+    fi_object = FormInstance(blueprint=fb_object, current_node=node_object, sender=request.user.profile)
+
     if request.method=="POST":
         #save the  instance in MONGO in the relevant collection
-        data = dict(request.POST)
+        data = request.POST.dict()
         del data['csrfmiddlewaretoken']
-        fb_object.create_instance(data)
+        # data['section_id'] = section_id
+        # data['node_id'] = node_id
+        fi_object.save()
+        fi_object.create_document(data)
+        fi_object.send_forward()
         return HttpResponse("Form Instance Created")
     else:
         #add the form html tag and the submit button to the section html
@@ -119,5 +127,32 @@ def fi_create(request, fb_id):
 
 
 @login_required
-def fi_respond(request):
-    pass
+def fi_respond(request, fi_id):
+    # get the form instance object
+    fi_object = FormInstance.objects.get(id=fi_id)
+    fb_object = fi_object.blueprint
+    #get the section corressponding to the current node of the workflow from the section_id attribute of the node model
+    curr_section_id = fi_object.current_node.section_id#curr_section_id is 1-indexed
+    section_html, node_id = fb_object.fetch_section_html(curr_section_id)
+    if request.method=='POST':
+        data = request.POST.copy()#make a copy of the query dict returned which is immutable
+        print(data)
+        del data['csrfmiddlewaretoken']
+        fi_object.add_response(data)
+        # fi_object.send_forward()
+        return HttpResponse("Response Successful")
+    else:
+        context = {
+            'section_html': section_html,
+        }
+        return render(request, 'forms/fi_respond.html', context=context)
+
+@login_required
+def fi_detail(request, fi_id):
+    fi_object = FormInstance.objects.get(id=fi_id)
+    fi_responses = fi_object.fetch_responses()
+    context = {
+        'fi_object': fi_object,
+        'fi_responses': fi_responses,
+    }
+    return render(request, 'forms/fi_detail.html', context = context)

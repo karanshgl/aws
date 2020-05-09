@@ -42,36 +42,41 @@ class FormBlueprintParser:
     def _parse_string_field(self, field):
         #return the html string
         _field_id = field['id']
+        _field_title = field['title']
         _field_html = "<div class='form-group'>"
         _field_html += "<label for='"+_field_id+"'>"+field['title']+"</label>";
         if field['required']==True:
-            _field_html += "<input class='form-control' type='text' id='"+_field_id+"' name='"+_field_id+"' required='required'><br>"
+            _field_html += "<input class='form-control' type='text' id='"+_field_id+"' name='"+_field_title+"' required='required'><br>"
         else:
-            _field_html += "<input class='form-control' type='text' id='"+_field_id+"' name='"+_field_id+"'><br>"
+            _field_html += "<input class='form-control' type='text' id='"+_field_id+"' name='"+_field_title+"'><br>"
         _field_html+='</div>'
         return _field_html
 
     def _parse_integer_field(self, field):
         #return the html string
         _field_id = field['id']
+        _field_title = field['title']
+
         _field_html = "<div class='form-group'>"
         _field_html += "<label for='"+_field_id+"'>"+field['title']+"</label>";
         if field['required']==True:
-            _field_html += "<input class='form-control' type='number' id='"+_field_id+"' name='"+_field_id+"' required='required'><br>"
+            _field_html += "<input class='form-control' type='number' id='"+_field_id+"' name='"+_field_title+"' required='required'><br>"
         else:
-            _field_html += "<input class='form-control' type='number' id='"+_field_id+"' name='"+_field_id+"' ><br>"
+            _field_html += "<input class='form-control' type='number' id='"+_field_id+"' name='"+_field_title+"' ><br>"
         _field_html+='</div>'
         return _field_html
 
     def _parse_fl_field(self, _field):
         #return the html string
         _field_id = _field['id']
+        _field_title = _field['title']
+
         _field_html = "<div class='form-group'>"
         _field_html += "<label for='"+_field_id+"'>"+_field['title']+"</label>";
         if _field['required']==True:
-            _field_html += "<input class='form-file' type='file' id='"+_field_id+"' name='"+_field_id+"'  required='required'><br>"
+            _field_html += "<input class='form-file' type='file' id='"+_field_id+"' name='"+_field_title+"'  required='required'><br>"
         else:
-            _field_html += "<input class='form-file' type='file' id='"+_field_id+"' name='"+_field_id+"' ><br>"
+            _field_html += "<input class='form-file' type='file' id='"+_field_id+"' name='"+_field_title+"' ><br>"
         _field_html+='</div>'
         return _field_html
 
@@ -83,9 +88,9 @@ class FormBlueprintParser:
 
         for _option in _field['options']:
             if _field['required']==True:
-                _field_html+="<div class='form-check'><label class='form-check-label'><input type='radio' name='"+_option['name']+"' value='"+_option['value']+"' required>"+_option['value']+"</label></div><br>";
+                _field_html+="<div class='form-check'><label class='form-check-label'><input type='radio' name='"+_field_title+"' value='"+_option['value']+"' required>"+_option['value']+"</label></div><br>";
             else:
-                _field_html+="<div class='form-check'><label class='form-check-label'><input type='radio' name='"+_option['name']+"' value='"+_option['value']+"' >"+_option['value']+"</label></div><br>";
+                _field_html+="<div class='form-check'><label class='form-check-label'><input type='radio' name='"+_field_title+"' value='"+_option['value']+"' >"+_option['value']+"</label></div><br>";
 
         _field_html+="</div>"
         return _field_html
@@ -98,9 +103,9 @@ class FormBlueprintParser:
 
         for _option in _field['options']:
             if _field['required']==True:
-                _field_html+="<div class='form-check'><label class='form-check-label'><input type='checkbox' name='"+_option['name']+"' value='"+_option['value']+"' required>"+_option['value']+"</label></div><br>";
+                _field_html+="<div class='form-check'><label class='form-check-label'><input type='checkbox' name='"+_field_title+"' value='"+_option['value']+"' required>"+_option['value']+"</label></div><br>";
             else:
-                _field_html+="<div class='form-check'><label class='form-check-label'><input type='checkbox' name='"+_option['name']+"' value='"+_option['value']+"' >"+_option['value']+"</label></div><br>";
+                _field_html+="<div class='form-check'><label class='form-check-label'><input type='checkbox' name='"+_field_title+"' value='"+_option['value']+"' >"+_option['value']+"</label></div><br>";
 
         _field_html+="</div>"
         return _field_html

@@ -73,7 +73,7 @@ def create_workflow(request):
 					role = Role.objects.get(role_name = role_name)
 					team = Team.objects.get(team_name = team_name) if team_name != "None" else None
 
-					cur_node = Node(prev_node = prev, assosiated_role = role, assosiated_team = team, workflow = workflow)
+					cur_node = Node(prev_node = prev, associated_role = role, associated_team = team, workflow = workflow)
 					cur_node.save()
 
 					if prev:
@@ -82,7 +82,7 @@ def create_workflow(request):
 
 					prev = cur_node
 
-			return redirect('forms_blueprint_edit', fb_id = workflow.formblueprint.id)
+			return redirect('fb_edit', fb_id = workflow.formblueprint.id)
 
 		except ValueError as err:
 			print(err)

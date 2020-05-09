@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% load check_if_list %}
+
+{% block header %}
+    <title>AWS | Forms | Form Instance Detail </title>
+
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+
+{%endblock%}
+
+
+{% block content%}
+    <div class="row">
+        <div class='col-md-1'></div>
+        <div class='col-md-10'>
+            {% for response in fi_responses %}
+                {% comment %} fi_response is an array{% endcomment %}
+                {% comment %} make a card for each response {% endcomment %}
+                <br>
+                <div class='card'>
+                    <div class='card-header'>
+                        <h5>#{{ forloop.counter }}</h5>
+                    </div>
+                    <div class='card-body'>
+                        <small><p class="card-subtitle mb-2 text-muted">{{response.user}} at {{response.date_time|date:"h:i A"}} on {{response.date_time|date:"l, d F Y"}}</p></small>
+                        {% for key, val in response.items %}
+                            {% comment %} then show the key value pairs here  {% endcomment %}
+                            {% if key == 'node_id' or key == 'date_time' or key == 'user' %}
+                                {% comment %} do nothing {% endcomment %}
+                            {%else%}
+                                {% if val|is_list %}
+                                    <p><strong>{{key}}: </strong>
+                                        {% for v in val %}
+                                            {% if forloop.last %}
+                                                {{v}}
+                                            {% else %}
+                                                {{v}}, 
+                                            {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% else %}
+                                    <p> <strong>{{key}}</strong>: {{val}}</p>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <a href="#" class='card-link'>Dummy</a>
+                    </div>
+                </div>
+                <br>
+            {% endfor %}
+        </div>
+        <div class='col-md-1'></div>
+    </div>
+{%endblock%}

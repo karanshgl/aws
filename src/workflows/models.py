@@ -9,14 +9,14 @@ class Node(models.Model):
     """ Represents a node of a workflow """
     next_node = models.ForeignKey('Node', on_delete = models.SET_NULL, null = True, related_name = 'next', blank=True)
     prev_node = models.ForeignKey('Node', on_delete = models.CASCADE, null = True, related_name = 'prev', blank=True) # If HEAD is deleted, deleted them all
-    assosiated_role = models.ForeignKey(Role, on_delete = models.CASCADE, null = False)
-    assosiated_team = models.ForeignKey(Team, on_delete = models.SET_NULL, null = True, blank=True)
-
+    associated_role = models.ForeignKey(Role, on_delete = models.CASCADE, null = False)
+    associated_team = models.ForeignKey(Team, on_delete = models.SET_NULL, null = True, blank=True)
+    section_id = models.IntegerField(null=True, blank=True)
     # Workflow it belongs to
     workflow = models.ForeignKey('Workflow', on_delete = models.CASCADE, null = False) # If no workflow, no node
 
     def __str__(self):
-        return "{} - {}".format(self.workflow, self.assosiated_role)
+        return "{} - {}".format(self.workflow, self.associated_role)
 
 
 class Workflow(models.Model):

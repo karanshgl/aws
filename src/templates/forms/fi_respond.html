@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block header %}
+    <title>AWS | Forms | Fill Form </title>
+
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+
+    {% comment %} <script>
+        let fb_id = parseInt("{{ fb_object.pk }}");
+    </script> {% endcomment %}
+{%endblock%}
+
+{% block content %}
+
+    <div class="row">
+        <br><br><br>
+        <div class='col-md-1'></div>
+        <div class='col-md-10'>
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{ section_html | safe }}
+                {% comment %} <input type='hidden' name='section_id' value={{ section_id }}>
+                <input type='hidden' name='node_id' value={{ node_id }}> {% endcomment %}
+
+                <div class='form-actions'><input class='btn btn-primary' type='submit' value='Submit'></div>
+            </form>
+        </div>
+        <div class='col-md-1'></div>
+    </div>
+
+
+{%endblock%}

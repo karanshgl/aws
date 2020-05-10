@@ -4,6 +4,11 @@
 {% block header %}
     <title>AWS | Forms | Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <script>
+        function showMessage(s) {
+            alertify.error(s);
+        }
+    </script>
 {%endblock%}
 
 {% block content %}
@@ -17,7 +22,7 @@
         <br>
         {% if pending_with_me_form_instances %}
             <h3>Pending With Me</h3>
-            <table class='styled-table'>
+            <table class='styled-table table-hover' >
                 <tr>
                     <th class='styled-table'>Ref#</th>
                     <th class='styled-table'>Type</th>

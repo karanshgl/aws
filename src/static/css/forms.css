@@ -21,6 +21,12 @@ td.styled-table {
     padding: 8px;
 }
 
+tr{
+    line-height: 30px;
+    min-height: 30px;
+    height: 30px;
+}
+
 tr:nth-child(even) {
 background-color: #dddddd;
 }

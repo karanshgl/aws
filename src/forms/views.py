@@ -13,6 +13,16 @@ import datetime
 
 # Create your views here.
 @login_required
+def dashboard(request):
+    #separate the form instances into two parts....those that I have seen in the past and those that are now pending with me
+    #could further divide into active and inactive
+    context = {
+        'pending_with_me_form_instances': FormInstance.objects.all(),
+        'rest_form_instances': FormInstance.objects.all(),
+    }
+    return render(request, 'forms/dashboard.html', context=context)
+
+@login_required
 def fb_all(request):
     context ={
         'form_blueprints':FormBlueprint.objects.all()
@@ -156,3 +166,9 @@ def fi_detail(request, fi_id):
         'fi_responses': fi_responses,
     }
     return render(request, 'forms/fi_detail.html', context = context)
+
+@login_required
+def fi_nudge(request, fi_id):
+    #TODO: do the nudge procedure here
+    #TODO: show some kind of message popup that the nudge has been sent
+    return redirect('dashboard')

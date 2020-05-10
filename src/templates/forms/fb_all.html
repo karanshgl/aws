@@ -1,106 +1,78 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block header %}
     <title>AWS | Forms | All Forms</title>
-    <style>
-        table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <script>
+        function showMessage(s) {
+            alertify.error(s);
         }
-
-        td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-        }
-
-        tr:nth-child(even) {
-        background-color: #dddddd;
-        }
-
-        a:link {
-        color: black;
-        }
-
-        /* visited link */
-        a:visited {
-        color: black;
-        }
-
-        /* mouse over link */
-        a:hover {
-        color: black;
-        }
-
-        /* selected link */
-        a:active {
-        color: black;
-        }
-    </style>
+    </script>
 {%endblock%}
 
 {% block content %}
     <div class='row'>
-    <div class='col-md-1'></div>
-    <div class='col-md-10'>
-        <div class='jumbotron'>
-            <h5><strong>Welcome to the Automated Workflow System - Forms Dashboard Page</strong></h5>
-        </div>
-        <br><br>
-        <table>
-            <tr>
-                <th>Title</th>
-                {% comment %} <th>Workflow</th> {% endcomment %}
-                <th>Creator</th>
-                <th>Active</th>
-                <th>Edit</th>
-                <th>Preview</th>
-                <th>Create Instance</th>
-                <th>Toggle Activation</th>
-            </tr>
-            {% for fb in form_blueprints %}
-                <tr>
-                    {% comment %} <td>{{ fb.title }}</td> {% endcomment %}
-                    <td>{{ fb.workflow.title  }}</td>
-                    <td>{{ fb.workflow.creator }}</td>
-                    <td>{{ fb.active }}</td>
-                    <td>
-                        {% ifequal fb.workflow.creator user.profile %}
-                            {% if fb.saved %}
-                                <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Edit</a></button>
-                            {%else%}
-                                <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fb_edit' fb_id=fb.id %}">Edit</a></button>
-                            {% endif %}
-                        {% else %}
-                            <button type="button" class="btn btn-xs btn-success disabled">Edit</button>
-                        {% endifequal %}
-                    </td>
-                    <td>
-                        {% if fb.saved %}
-                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fb_preview' fb_id=fb.id %}">Preview</a></button>
-                        {%else%}
-                            <button type="button" class="btn btn-success btn-xs" disabled><a href="{% url 'fb_preview' fb_id=fb.id %}">Preview</a></button>
-                        {%endif%}
-                    </td>
-                    <td>
-                        {% if fb.saved %}
-                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fi_create' fb_id=fb.id%}">Create Instance</a></button>
-                        {% else %}
-                            <button type="button" class="btn btn-success btn-xs" disabled><a href="#">Create Instance</a></button>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% ifequal fb.workflow.creator user.profile %}
-                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fb_toggle_activation' fb_id=fb.id %}">Toggle Activation</a></button>
-                        {%else%}
-                            <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Toggle Activation</a></button>
-                        {%endifequal%}
-                    </td>
+        <div class='col-md-1'></div>
+        <div class='col-md-10'>
+            <br><br>
+            <div class='jumbotron'>
+                <h5><strong>Welcome to the Automated Workflow System - Select a Form to Edit or Fill</strong></h5>
+            </div>
+            <br><br>
+            <table  class='styled-table' >
+                <tr  class='styled-table' >
+                    <th class='styled-table'>Title</th>
+                    {% comment %} <th>Workflow</th> {% endcomment %}
+                    <th class='styled-table'>Creator</th>
+                    <th class='styled-table' >Active</th>
+                    <th class='styled-table'>Edit</th>
+                    <th class='styled-table'>Preview</th>
+                    <th class='styled-table' >Create Instance</th>
+                    <th class='styled-table' >Toggle Activation</th>
                 </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <div class='col-md-1'></div>
+                {% for fb in form_blueprints %}
+                    <tr class='styled-table' >
+                        {% comment %} <td>{{ fb.title }}</td> {% endcomment %}
+                        <td class='styled-table' >{{ fb.workflow.title  }}</td>
+                        <td class='styled-table' >{{ fb.workflow.creator }}</td>
+                        <td class='styled-table' >{{ fb.active }}</td>
+                        <td class='styled-table' >
+                            {% ifequal fb.workflow.creator user.profile %}
+                                {% if fb.saved %}
+                                    <a class='disabled-link' href="javascript:showMessage('Cannot edit form which is already saved!')">Edit</a>
+                                {%else%}
+                                    <a href="{% url 'fb_edit' fb_id=fb.id %}">Edit</a>
+                                {% endif %}
+                            {% else %}
+                                <a class='disabled-link' href="javascript:showMessage('Only the creator can edit!')">Edit</a>
+                            {% endifequal %}
+                        </td>
+                        <td class='styled-table' >
+                            {% if fb.saved %}
+                                <a href="{% url 'fb_preview' fb_id=fb.id %}">Preview</a>
+                            {%else%}
+                                <a class='disabled-link' href="javascript:showMessage('Form hasn't been saved yet!')">Preview</a>
+                            {%endif%}
+                        </td>
+                        <td class='styled-table' >
+                            {% if fb.saved %}
+                                <a href="{% url 'fi_create' fb_id=fb.id%}">Create Instance</a>
+                            {% else %}
+                                <a class='disabled-link' href="javascript:showMessage('Form hasn't been saved yet!')">Create Instance</a>
+                            {% endif %}
+                        </td>
+                        <td class='styled-table' >
+                            {% ifequal fb.workflow.creator user.profile %}
+                                <a href="{% url 'fb_toggle_activation' fb_id=fb.id %}">Toggle Activation</a>
+                            {%else%}
+                                <a class='disabled-link' href="javascript:showMessage('Only the creator can toggle activation!!')">Preview</a>
+                            {%endifequal%}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class='col-md-1'></div>
     </div>
 {%endblock%}

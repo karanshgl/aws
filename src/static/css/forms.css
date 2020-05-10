@@ -2,3 +2,48 @@
     margin: 0;
     text-align: center;
 }
+
+table.styled-table {
+font-family: arial, sans-serif;
+border-collapse: collapse;
+width: 100%;
+}
+
+th.styled-table {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+td.styled-table {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+background-color: #dddddd;
+}
+
+a:link.styled-link {
+color: black;
+}
+
+/* visited link */
+a:visited.styled-link {
+color: black;
+}
+
+/* mouse over link */
+a:hover.styled-link {
+color: black;
+}
+
+/* selected link */
+a:active.styled-link {
+color: black;
+}
+
+.disabled-link{
+    opacity:0.6;
+}

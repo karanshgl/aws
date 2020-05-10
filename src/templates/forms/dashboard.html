@@ -1,105 +1,91 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block header %}
     <title>AWS | Forms | Dashboard</title>
-    <style>
-        table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        }
-
-        td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-        }
-
-        tr:nth-child(even) {
-        background-color: #dddddd;
-        }
-
-        a:link {
-        color: black;
-        }
-
-        /* visited link */
-        a:visited {
-        color: black;
-        }
-
-        /* mouse over link */
-        a:hover {
-        color: black;
-        }
-
-        /* selected link */
-        a:active {
-        color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
 {%endblock%}
 
 {% block content %}
     <div class='row'>
     <div class='col-md-1'></div>
     <div class='col-md-10'>
-        <div class='jumbotron'>
-            <h5><strong>Welcome to the Automated Workflow System - Forms Dashboard Page</strong></h5>
-        </div>
         <br><br>
-        <table>
-            <tr>
-                <th>Title</th>
-                {% comment %} <th>Workflow</th> {% endcomment %}
-                <th>Creator</th>
-                <th>Active</th>
-                <th>Edit</th>
-                <th>Preview</th>
-                <th>Create Instance</th>
-                <th>Toggle Activation</th>
-            </tr>
-            {% for fb in form_blueprints %}
+        <div class='jumbotron'>
+            <h5><strong>Welcome to the Automated Workflow System - My Dashboard</strong></h5>
+        </div>
+        <br>
+        {% if pending_with_me_form_instances %}
+            <h3>Pending With Me</h3>
+            <table class='styled-table'>
                 <tr>
-                    {% comment %} <td>{{ fb.title }}</td> {% endcomment %}
-                    <td>{{ fb.workflow.title  }}</td>
-                    <td>{{ fb.workflow.creator }}</td>
-                    <td>{{ fb.active }}</td>
-                    <td>
-                        {% ifequal fb.workflow.creator user.profile %}
-                            {% if fb.saved %}
-                                <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Edit</a></button>
-                            {%else%}
-                                <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fb_edit' fb_id=fb.id %}">Edit</a></button>
-                            {% endif %}
-                        {% else %}
-                            <button type="button" class="btn btn-xs btn-success disabled">Edit</button>
-                        {% endifequal %}
-                    </td>
-                    <td>
-                        {% if fb.saved %}
-                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fb_preview' fb_id=fb.id %}">Preview</a></button>
-                        {%else%}
-                            <button type="button" class="btn btn-success btn-xs" disabled><a href="{% url 'fb_preview' fb_id=fb.id %}">Preview</a></button>
-                        {%endif%}
-                    </td>
-                    <td>
-                        {% if fb.saved %}
-                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fi_create' fb_id=fb.id%}">Create Instance</a></button>
-                        {% else %}
-                            <button type="button" class="btn btn-success btn-xs" disabled><a href="#">Create Instance</a></button>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% ifequal fb.workflow.creator user.profile %}
-                            <button type="button" class="btn btn-success btn-xs"><a href="{% url 'fb_toggle_activation' fb_id=fb.id %}">Toggle Activation</a></button>
-                        {%else%}
-                            <button type="button" class="btn btn-success btn-xs disabled"><a href="#">Toggle Activation</a></button>
-                        {%endifequal%}
-                    </td>
+                    <th class='styled-table'>Ref#</th>
+                    <th class='styled-table'>Type</th>
+                    <th class='styled-table'>Status</th> {# show the current node of the form instance#}
+                    <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
+                    <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
+                    <th class='styled-table'>Respond</th>
+                    <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
                 </tr>
-            {% endfor %}
-        </table>
+                {% for fi in pending_with_me_form_instances %}
+                    <tr>
+                        <td  class='styled-table'>{{ fi.id  }}</td>
+                        <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
+                        <td class='styled-table'>Pending at {{ fi.current_node }}</td>
+                        <td class='styled-table'>
+                            <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
+                        </td >
+                        <td class='styled-table'>{{fi.active}}</td>
+                        <td class='styled-table'>
+                            {% if  true %}{#put in the condition to check if this person can respond#}
+                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                            {% else %}
+                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                            {% endif %}
+                        </td>
+                        <td class='styled-table'>
+                            <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        <br>
+        {% if rest_form_instances %}
+            <h3>The Rest</h3>
+            <table class='styled-table'>
+                <tr>
+                    <th class='styled-table'>Ref#</th>
+                    <th class='styled-table'>Type</th>
+                    <th class='styled-table'>Status</th> {# show the current node of the form instance#}
+                    <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
+                    <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
+                    <th class='styled-table'>Respond</th>
+                    <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
+                </tr>
+                {% for fi in rest_form_instances %}
+                    <tr>
+                        <td  class='styled-table'>{{ fi.id  }}</td>
+                        <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
+                        <td class='styled-table'>Pending at {{ fi.current_node }}</td>
+                        <td class='styled-table'>
+                            <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
+                        </td >
+                        <td class='styled-table'>{{fi.active}}</td>
+                        <td class='styled-table'>
+                            {% if  true %}{#put in the condition to check if this person can respond#}
+                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                            {% else %}
+                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                            {% endif %}
+                        </td>
+                        <td class='styled-table'>
+                            <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
     </div>
     <div class='col-md-1'></div>
     </div>

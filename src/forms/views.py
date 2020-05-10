@@ -57,7 +57,7 @@ def fb_toggle_activation(request, fb_id):#fb is for form blueprint
     else: fb_object.active=True
     fb_object.save()
 
-    return redirect('forms_blueprint_dashboard')
+    return redirect('fb_all')
 
 
 def fb_create(request):

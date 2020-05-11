@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+    <title>AWS | Forms | All Forms</title>
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <script>
+        function showMessage(s) {
+            alertify.error(s);
+        }
+    </script>
+{%endblock%}
+
+{% block content %}
+    <div class='row'>
+        <div class='col-md-1'></div>
+        <div class='col-md-10'>
+            <br><br>
+            <div class='jumbotron'>
+                <h5><strong>Welcome to the Automated Workflow System - Select a Form to Edit or Fill</strong></h5>
+            </div>
+            <br><br>
+            {% if form_blueprints %}
+                <table  class='styled-table table-hover' >
+                    <tr  class='styled-table' >
+                        <th class='styled-table'>Title</th>
+                        {% comment %} <th>Workflow</th> {% endcomment %}
+                        <th class='styled-table'>Creator</th>
+                        <th class='styled-table' >Active</th>
+                        <th class='styled-table'>Preview</th>
+                        <th class='styled-table' >Create Instance</th>
+                    </tr>
+                    {% for fb in form_blueprints %}
+                        {% if fb.saved %}
+                            <tr class='styled-table' >
+                                {% comment %} <td>{{ fb.title }}</td> {% endcomment %}
+                                <td class='styled-table' >{{ fb.workflow.title  }}</td>
+                                <td class='styled-table' >{{ fb.workflow.creator }}</td>
+                                <td class='styled-table' >{{ fb.active }}</td>
+                                <td class='styled-table' >
+                                        <a href="{% url 'fb_preview' fb_id=fb.id %}">Preview</a>
+                                </td>
+                                <td class='styled-table' >
+                                        <a href="{% url 'fi_create' fb_id=fb.id%}">Create Instance</a>
+                                </td>
+                            </tr>
+                        {%endif%}
+
+                    {% endfor %}
+                </table>
+            {% else %}
+                <h5>Couldn't find any forms for your role :( </h5>
+            {% endif %}
+        </div>
+        <div class='col-md-1'></div>
+    </div>
+{%endblock%}

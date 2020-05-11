@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
-from .forms import FormBlueprintForm
-from .models import FormBlueprint, FormInstance
-from workflows.models import Workflow, Node
 import json
 import pymongo
 from pymongo import MongoClient
 from django.conf import settings
 import datetime
+
+from .forms import FormBlueprintForm
+from .models import FormBlueprint, FormInstance
+from workflows.models import Workflow, Node
+from teams.models import TeamHasEmployees
 
 
 # Create your views here.
@@ -105,6 +107,19 @@ def fb_preview(request, fb_id):
         'preview_html':preview_html
     }
     return render(request, 'forms/fb_preview.html', context = context)
+
+@login_required
+def fb_available_to_instantiate(request):
+    available_form_blueprints={}
+    #fetch role of the user
+    user_role=TeamHasEmployees.objects.get(employee= request.user.profile).role
+    #fetch form blueprints whose starting node has the role of the user. Only those form blueprints can be used to instantiate a form.
+    form_list=[good_form for good_form in FormBlueprint.objects.all() if good_form.workflow.get_flow()[0].associated_role==user_role]
+    context ={
+        'form_blueprints':form_list
+    }
+    return render(request, 'forms/fb_permitted.html', context=context)
+
 
 @login_required
 def fi_create(request, fb_id):

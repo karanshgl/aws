@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import dashboard, fb_all, fb_edit, fb_create, fb_preview, fb_toggle_activation, fi_create, fi_respond, fi_detail, fi_nudge
+from .views import dashboard, fb_all, fb_edit, fb_create, fb_preview, fb_toggle_activation, fi_create, fi_respond, fi_detail, fi_nudge, fb_available_to_instantiate
 
 urlpatterns = [
 	path('dashboard/', dashboard, name='dashboard',),
@@ -12,4 +12,5 @@ urlpatterns = [
 	path('fi_create/<int:fb_id>', fi_create, name='fi_create'),
 	path('fi_respond/<int:fi_id>', fi_respond, name='fi_respond'),
 	path('fi_nudge/<int:fi_id>', fi_nudge, name='fi_nudge'),
+	path('fb_permitted', fb_available_to_instantiate, name='fb_permitted'),
 ]

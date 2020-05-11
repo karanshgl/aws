@@ -54,6 +54,9 @@
                     </tr>
                 {% endfor %}
             </table>
+        {% else %}
+            <h3>Pending With Me</h3>
+                <h5>Hooray! No forms waiting for your approval or comments!</h5>
         {% endif %}
         <br>
         {% if rest_form_instances %}
@@ -91,6 +94,9 @@
                 {% endfor %}
             </table>
         {% endif %}
+        <br>
+            <h4><a href="{% url 'fb_permitted' %}">Fill a new form</a></h4>
+
     </div>
     <div class='col-md-1'></div>
     </div>

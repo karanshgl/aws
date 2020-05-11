@@ -3,3 +3,6 @@ env
 venv
 *.log
 # settings.py
+.vscode
+logs
+migrations

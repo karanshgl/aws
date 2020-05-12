@@ -139,9 +139,9 @@ def fi_create(request, fb_id):
         del data['csrfmiddlewaretoken']
         # data['section_id'] = section_id
         # data['node_id'] = node_id
-        fi_object.save()
         fi_object.create_document(data)
         fi_object.send_forward()
+        fi_object.save()
         return HttpResponse("Form Instance Created")
     else:
         #add the form html tag and the submit button to the section html

@@ -83,7 +83,7 @@ $(document).ready(function(){
         temp=temp.val()
         temp= JSON5.parse(temp)
         curr_section+=1;
-        $("#dynamic-form").append("<div class='card'><div class='card-header'><h4>Section "+curr_section+"</h4></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section></div></div><br>");
+        $("#dynamic-form").append("<div class='card'><div class='card-header'><h4>Section: "+curr_section+"<br>"+"ID of associated node:"+temp['node_id']+"</h4></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section></div></div><br>");
     
         //add the section in the form object as well
         let section = new Section('section_'+String(curr_section),temp['role'],temp['team'], temp['node_id']);

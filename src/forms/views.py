@@ -17,9 +17,15 @@ from teams.models import TeamHasEmployees
 @login_required
 def dashboard(request):
     #separate the form instances into two parts....those that I have seen in the past and those that are now pending with me
+    user_role=TeamHasEmployees.objects.get(employee= request.user.profile).role
+    user_team=TeamHasEmployees.objects.get(employee= request.user.profile).team
+    form_list_pending_with_me=[]
+    for form in FormInstance.objects.all():
+        if (form.current_node.associated_role==user_role  and form.current_node.associated_team==user_team):
+            form_list_pending_with_me.append(form)
     #could further divide into active and inactive
     context = {
-        'pending_with_me_form_instances': FormInstance.objects.all(),
+        'pending_with_me_form_instances': form_list_pending_with_me,
         'rest_form_instances': FormInstance.objects.all(),
     }
     return render(request, 'forms/dashboard.html', context=context)

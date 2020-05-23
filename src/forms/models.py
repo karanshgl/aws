@@ -15,6 +15,7 @@ import datetime
 from .FormBlueprintParser import *
 from employees.models import Profile
 
+from .routing import get_node_user, get_workflow_user_list
 
 def qdict_to_dict(qdict):
     """Convert a Django QueryDict to a Python dict.
@@ -181,3 +182,33 @@ class FormInstance(models.Model):
             self.current_node = self.current_node.prev_node
             return True 
         return False
+
+    def is_user_in_workflow(self, user):
+        # Checks whether the user is part of the workflow or not
+        user_list = get_workflow_user_list(self)
+
+        return user in user_list
+
+    def is_user_current_node(self, user):
+        # Checks whether the user is the current node or not
+        current_node = self.current_node
+        blueprint = self.blueprint
+        workflow = blueprint.workflow
+        head = Workflow.objects.get(workflow = workflow, prev_node = None)
+
+        sender = self.sender
+
+        # IF CURRENT NODE IS HEAD
+        if current_node == head:
+            return user == sender
+
+        it_node = head
+
+        while it_node != current_node:
+            it_node = it_node.next_node
+            receiver = get_node_user(it_node, sender)
+            sender = receiver
+
+        # Now the sender is the current node user
+        return user == sender
+        

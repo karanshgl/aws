@@ -19,7 +19,7 @@ class Role(models.Model):
 	""" Represents a Role """
 
 	role_name = models.CharField(max_length = 255, unique = True, null = False, blank = False)
-	default_head = models.models.BooleanField(default=False) # Tells us whether the role is a default head in the team or not
+	default_head = models.BooleanField(default=False) # Tells us whether the role is a default head in the team or not
 
 	def __str__(self):
 		return self.role_name

@@ -25,6 +25,15 @@ class Workflow(models.Model):
     title = models.CharField(max_length = 255, null = False, unique = True, blank = False)
     # For head node, we can filter with prev_node = NULL
 
+    VISIBILITY_OPTIONS = (
+            ('A', "All"),
+            ('C', "Current Only"),
+            ('P', "All Preceeding")
+        )
+
+    visibility = models.CharField(max_length=2, choices= VISIBILITY_OPTIONS, default = 'C')
+
+
     def __str__(self):
         return self.title
 
@@ -42,5 +51,10 @@ class Workflow(models.Model):
 
 
 class EmployeeHasPermission(models.Model):
+    # TODO: Table with manages the permissions for workflows
+    pass
+
+
+class TeamsHasPermission(models.Model):
     # TODO: Table with manages the permissions for workflows
     pass

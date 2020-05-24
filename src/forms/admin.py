@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import FormBlueprint, FormInstance
+from .models import FormBlueprint, FormInstance, FormNotification
 # Register your models here.
 
 class FormBlueprintAdminModel(admin.ModelAdmin):
@@ -30,3 +30,13 @@ class FormInstanceAdminModel(admin.ModelAdmin):
 		model = FormInstance
 
 admin.site.register(FormInstance, FormInstanceAdminModel)
+
+class FormNotificationAdminModel(admin.ModelAdmin):
+	""" Admin Model """
+
+	list_display = ("id",  "user", "form_instance", "status")
+	search_fields =("user", "form_instance", )
+	class Meta:
+		model = FormNotification
+
+admin.site.register(FormNotification, FormNotificationAdminModel)

@@ -17,7 +17,7 @@ class TeamHasEmployees(models.Model):
 
     role = models.ForeignKey(Role, on_delete = models.CASCADE, null = False)
     team = models.ForeignKey(Team, on_delete = models.CASCADE, null = False)
-    employee = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False)
+    employee = models.OneToOneField(Profile, on_delete = models.CASCADE, null = False)
 
     def __str__(self):
         return "{} {}: {}".format(self.team, self.role, self.employee)

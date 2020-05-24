@@ -1,6 +1,6 @@
 from django.db import models
 from employees.models import Profile, Role
-from teams.models import Team
+from teams.models import Team, TeamHasEmployees
 from workflows.models import Workflow, Node
 
 from django.db.models.signals import post_save
@@ -212,3 +212,24 @@ class FormInstance(models.Model):
         # Now the sender is the current node user
         return user == sender
         
+
+
+class FormNotification(models.Model):
+    # Manages form notifications
+
+    user = models.ForeignKey(TeamHasEmployees, on_delete = models.CASCADE, null = False, blank = False) # User who gets notifcation
+    form_instance = models.ForeignKey(FormInstance, on_delete = models.CASCADE, null = False, blank = False) # Corresponding form instance
+
+    STATUS_CHOICES = (
+            ('F', 'Forwarded'),
+            ('B', 'Sent Back for comments'),
+            ('N', 'No Action Taken')
+        )
+
+    status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = 'N')
+
+
+    def __str__(self):
+        return '{} : {}'.format(self.user, self.form_instance)
+
+

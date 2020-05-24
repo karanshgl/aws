@@ -148,6 +148,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+LOGOUT_REDIRECT_URL = "/" #To logout back to the home page instead of the default admin logout page
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]

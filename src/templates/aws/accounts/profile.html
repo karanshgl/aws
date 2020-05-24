@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+    <title>My Profile</title>
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <script>
+        function showMessage(s) {
+            alertify.error(s);
+        }
+    </script>
+{%endblock%}
+
+{% block content %}
+
+        <div class="card">
+            <h1>My Profile</h1>
+            <p>Username : {{ user }}</p>
+            <p>Role : {{ user_role }}</p>
+            <p>Team : {{ user_team }}</p>
+            <p><a href="/password">Change Password</a><p>
+        </div>
+{% endblock %}

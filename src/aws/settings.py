@@ -148,6 +148,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+LOGIN_REDIRECT_URL = "/" #To go to home after login instead of getting redirected to accounts/profile on login which is default
 LOGOUT_REDIRECT_URL = "/" #To logout back to the home page instead of the default admin logout page
 
 STATICFILES_DIRS = [

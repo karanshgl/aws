@@ -18,13 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home
+from .views import home, profile, change_password#, password_changed
 from .views import signup
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    # path('login/', auth_views.login, name='login'),
-    # path('logout/', auth_views.logout, name='logout'),
     path('admin/', admin.site.urls),
     path('employee/', include('employees.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
@@ -33,7 +31,9 @@ urlpatterns = [
     path('teams/', include('teams.urls')),
     path('workflows/', include('workflows.urls')),
     path('', home, name='home'),
+    path('profile/', profile, name='profile'),
     path('api-auth/', include('rest_framework.urls')),
+    url(r'^password/$', change_password, name='change_password'),
 ]
 
 

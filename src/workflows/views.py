@@ -17,49 +17,41 @@ def create_workflow(request):
 	if request.method == 'POST':
 		form_data = request.POST
 		print(form_data)
-		form_values_list = list(form_data.values())
-		values_length = len(form_values_list)
+		
+		count = int(form_data['count'][0])
 
 		# CREATING DICT FOR ROLE-TEAM PAIR
-		roles = []
-		teams = []
-		j = 2
-		k = 3
-		while j < (values_length - 1):
-			if form_values_list[k] != 'None':
-				roles.append(form_values_list[j])
-				teams.append(form_values_list[j+1])
-			j += 2
-			k += 2
-		merged_list = tuple(zip(roles, teams))
-		nested_merged_list = []
+		NODE_ROLE_FORMAT = 'node_{}_role'
+		NODE_TEAM_FORMAT = 'node_{}_team'
 
-		print('roles', roles)
-		print('teams', teams)
+		# LOOP DETECTION
+		role_team_pairs = []
 
-		for pair in merged_list:
-		    a = []
-		    a.append(tuple(pair))
-		    nested_merged_list.append(a)
+		is_loop = False
 
-		output = collections.defaultdict(int)
-		for elem in nested_merged_list:
-			output[elem[0]] += 1
+		for i in range(1, count+1):
+			role_input = NODE_ROLE_FORMAT.format(i) 
+			team_input = NODE_TEAM_FORMAT.format(i)
 
-		count = int(form_data['count'][0])
+			if team_input != 'None':
+				role_team_pair = (role_input, team_input)
+				if role_team_pair in role_team_pairs:
+					is_loop = True
+				role_team_pairs.append(role_team_pair)
+
+		
 		title = form_data['title']
 		user = Profile.objects.get(user = request.user)
 
 		try:
 			with transaction.atomic():
 				# CHECK FOR LOOP IN WORKFLOW
-				for i in output.values():
-					if i > 1:
-						raise ValueError('Loop is present in the workflow')
+				if is_loop:
+					raise ValueError('Loop is present in the workflow')
 
 				# CHECK IF HEAD IS EMPLOYEE AND IT DOES NOT BELONGS ANY TEAM
-				if roles[0].lower() == 'employee' and teams[0] != 'None':
-					raise ValueError('Employee should not belong to any team')
+				# if roles[0].lower() == 'employee' and teams[0] != 'None':
+				#	raise ValueError('Employee should not belong to any team')
 
 				# CREATE WORKFLOW
 				workflow = Workflow(creator = user, title = title)

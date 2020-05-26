@@ -18,6 +18,9 @@ class Node(models.Model):
     def __str__(self):
         return "{} - {}".format(self.workflow, self.associated_role)
 
+    def get_blueprint(self):
+        return self.workflow.formblueprint
+
 
 class Workflow(models.Model):
     

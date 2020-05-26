@@ -126,13 +126,16 @@ def fb_available_to_instantiate(request):
     #fetch role of the user
     try:
         user_role=TeamHasEmployees.objects.get(employee= request.user.profile).role
+
         #fetch form blueprints whose starting node has the role of the user. Only those form blueprints can be used to instantiate a form.
-        form_list=[good_form for good_form in FormBlueprint.objects.all() if good_form.workflow.get_flow()[0].associated_role==user_role]
+        head_nodes= Node.objects.filter(associated_role=user_role, prev_node = None) 
+        forms = [node.get_blueprint() for node in head_nodes]
         context ={
-            'form_blueprints':form_list
+            'form_blueprints':forms
         }
         return render(request, 'forms/fb_permitted.html', context=context)
-    except:
+    except Exception as e:
+        print(e)
         return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
 
 

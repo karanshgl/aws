@@ -40,7 +40,7 @@ def get_node_user(node, sender):
 
 
 
-def get_workflow_user_list(form_instance):
+def get_workflow_user_list(form_instance, end_node = None):
 	# Returns the list of users in order for the workflow
 	blueprint = form_instance.blueprint
 	workflow = blueprint.workflow
@@ -51,7 +51,7 @@ def get_workflow_user_list(form_instance):
 
 	cur_node = head
 
-	while cur_node.next_node:
+	while cur_node.next_node != end_node:
 		cur_node = cur_node.next_node
 		sender = user_list[-1]
 		receiver = get_node_user(cur_node, sender)

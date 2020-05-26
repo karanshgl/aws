@@ -1,4 +1,3 @@
-
 class FormBlueprint{
     constructor(id){
         this.id=id;
@@ -26,11 +25,12 @@ class Field{
 }
 //the Section class
 class Section{
-    constructor(id,role,team, node_id){
+    constructor(id,role,team, node_id, section_name){
         this.id = id;
-        this.role=role;
+        this.section_name = section_name;
+        this.role = role;
         this.node_id = node_id;
-        this.team=team;
+        this.team = team;
         this.fields = new Array();
     }
 
@@ -48,6 +48,8 @@ class Option{
 }
 
 $(document).ready(function(){
+
+    console.log("Hello");
     $("#section_node").select2({
 
     });
@@ -80,13 +82,14 @@ $(document).ready(function(){
     //function for adding a section in the form
     function addSection(){
         var temp=$("#section_node")
+        var section_name = $("#section_name").val()
         temp=temp.val()
         temp= JSON5.parse(temp)
         curr_section+=1;
-        $("#dynamic-form").append("<div class='card'><div class='card-header'><h4>Section: "+curr_section+"<br>"+"ID of associated node:"+temp['node_id']+"</h4></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section></div></div><br>");
+        $("#dynamic-form").append("<div class='card'><div class='card-header'><h4>Section: "+section_name+"<br>"+"ID of associated node:"+temp['node_id']+"</h4></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section></div></div><br>");
     
         //add the section in the form object as well
-        let section = new Section('section_'+String(curr_section),temp['role'],temp['team'], temp['node_id']);
+        let section = new Section('section_'+String(curr_section),temp['role'],temp['team'], temp['node_id'], section_name);
         fb.addSection(section);
 
     }

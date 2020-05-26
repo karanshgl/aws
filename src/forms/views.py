@@ -8,9 +8,12 @@ from django.conf import settings
 import datetime
 
 from .forms import FormBlueprintForm
-from .models import FormBlueprint, FormInstance
+from .models import FormBlueprint, FormInstance, FormNotification
 from workflows.models import Workflow, Node
 from teams.models import TeamHasEmployees
+
+from django.db import transaction
+
 
 
 # Create your views here.
@@ -19,21 +22,27 @@ def dashboard(request):
     #separate the form instances into two parts....those that I have seen in the past and those that are now pending with me
 
     try:
-        the_instance = TeamHasEmployees.objects.get(employee= request.user.profile)
+        the_instance = request.user.profile.teamhasemployees
 
-        user_role=the_instance.role
-        user_team=the_instance.team
-        form_list_pending_with_me=[]
-        for form in FormInstance.objects.all():
-            if (form.current_node.associated_role==user_role  and form.current_node.associated_team==user_team):
-                form_list_pending_with_me.append(form)
+        notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True)
+
+        forms_no_action = [n.form_instance for n in notifications]
+
+        # user_role=the_instance.role
+        # user_team=the_instance.team
+        # form_list_pending_with_me=[]
+        # for form in FormInstance.objects.all():
+        #     if (form.current_node.associated_role==user_role  and form.current_node.associated_team==user_team):
+        #         form_list_pending_with_me.append(form)
+
         #could further divide into active and inactive
         context = {
-            'pending_with_me_form_instances': form_list_pending_with_me,
+            'pending_with_me_form_instances': forms_no_action,
             'rest_form_instances': FormInstance.objects.all(),
         }
         return render(request, 'forms/dashboard.html', context=context)
-    except:
+    except Exception as e:
+        print(e)
         return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
 
 @login_required
@@ -149,18 +158,25 @@ def fi_create(request, fb_id):
 
     node_object = Node.objects.get(id=node_id)
 
-    fi_object = FormInstance(blueprint=fb_object, current_node=node_object, sender=request.user.profile)
 
     if request.method=="POST":
         #save the  instance in MONGO in the relevant collection
-        data = request.POST.dict()
-        del data['csrfmiddlewaretoken']
-        # data['section_id'] = section_id
-        # data['node_id'] = node_id
-        fi_object.create_document(data)
-        fi_object.send_forward()
-        fi_object.save()
-        return HttpResponse("Form Instance Created")
+        try:
+            sender = request.user.profile
+            with transaction.atomic():
+                fi_object = FormInstance.objects.create(blueprint=fb_object, current_node=node_object, sender=request.user.profile)
+                
+                data = request.POST.dict()
+                del data['csrfmiddlewaretoken']
+                # data['section_id'] = section_id
+                # data['node_id'] = node_id
+                fi_object.create_document(data)
+                fi_object.send_forward(sender)
+                fi_object.save()
+            return HttpResponse("Form Instance Created")
+        except Exception as e:
+            print(e)
+            return HttpResponse('Creation Failed')
     else:
         #add the form html tag and the submit button to the section html
         context = {
@@ -179,11 +195,18 @@ def fi_respond(request, fi_id):
     section_html, node_id = fb_object.fetch_section_html(curr_section_id)
     if request.method=='POST':
         data = request.POST.copy()#make a copy of the query dict returned which is immutable
-        print(data)
-        del data['csrfmiddlewaretoken']
-        fi_object.add_response(data)
-        # fi_object.send_forward()
-        return HttpResponse("Response Successful")
+        try:
+            sender = request.user.profile
+            print(data)
+            del data['csrfmiddlewaretoken']
+            with transaction.atomic():
+                fi_object.add_response(data)
+                fi_object.send_forward(sender)
+                fi_object.save()
+            return HttpResponse("Response Successful")
+        except Exception as e:
+            print(e)
+            return HttpResponse('Response Failed')
     else:
         context = {
             'section_html': section_html,

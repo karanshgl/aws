@@ -120,7 +120,7 @@ class FormInstance(models.Model):
     blueprint = models.ForeignKey(FormBlueprint, on_delete = models.CASCADE, null = False, related_name='instances')
     current_node = models.ForeignKey(Node, on_delete = models.CASCADE, null = False)
     sender = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     creation_time = models.DateTimeField(auto_now=True, auto_now_add=False, editable=False)
 
     def fetch_document(self):
@@ -171,10 +171,30 @@ class FormInstance(models.Model):
         return document['responses']
 
     """send this instance to the next node"""
-    def send_forward(self):
+    def send_forward(self, sender):
+        # Create an instance in form notifcation
+
+        the_sender = sender.teamhasemployees
+        notification, created = FormNotification.objects.get_or_create(user = the_sender, form_instance = self) 
+        notification.status = 'F'
+        notification.save()
+
         if self.current_node.next_node:
-            self.current_node = self.current_node.next_node
+            next_node = self.current_node.next_node
+            # Get Receiver
+            receiver = get_node_user(next_node, sender)
+            the_receiver = receiver.teamhasemployees
+
+            # Send notification
+            notification, created = FormNotification.objects.get_or_create(user = the_receiver, form_instance = self)
+            notification.status = 'N'
+            notification.save()
+
+            self.current_node = next_node
             return True
+
+        # FINAL NODE
+        self.active = False
         return False
     """send this instance to the prev node"""
     def send_backward(self):

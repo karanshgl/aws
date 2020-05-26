@@ -189,14 +189,17 @@ def fi_create(request, fb_id):
 def fi_respond(request, fi_id):
     # get the form instance object
     fi_object = FormInstance.objects.get(id=fi_id)
+    sender = request.user.profile
     fb_object = fi_object.blueprint
+
+    if not fi_object.is_user_current_node(sender): return HttpResponse("403: Forbidden")
     #get the section corressponding to the current node of the workflow from the section_id attribute of the node model
     curr_section_id = fi_object.current_node.section_id#curr_section_id is 1-indexed
     section_html, node_id = fb_object.fetch_section_html(curr_section_id)
     if request.method=='POST':
         data = request.POST.copy()#make a copy of the query dict returned which is immutable
         try:
-            sender = request.user.profile
+            
             print(data)
             del data['csrfmiddlewaretoken']
             with transaction.atomic():
@@ -216,6 +219,11 @@ def fi_respond(request, fi_id):
 @login_required
 def fi_detail(request, fi_id):
     fi_object = FormInstance.objects.get(id=fi_id)
+    sender = request.user.profile
+    fb_object = fi_object.blueprint
+
+    if not fi_object.is_user_in_workflow(sender): return HttpResponse("403: Forbidden")
+    
     fi_responses = fi_object.fetch_responses()
     context = {
         'fi_object': fi_object,

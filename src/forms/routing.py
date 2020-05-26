@@ -44,7 +44,7 @@ def get_workflow_user_list(form_instance):
 	# Returns the list of users in order for the workflow
 	blueprint = form_instance.blueprint
 	workflow = blueprint.workflow
-	head = Workflow.objects.get(workflow = workflow, prev_node = None)
+	head = Node.objects.get(workflow = workflow, prev_node = None)
 
 	og_sender = form_instance.sender
 	user_list = [og_sender]

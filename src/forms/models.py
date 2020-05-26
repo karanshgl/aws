@@ -214,7 +214,7 @@ class FormInstance(models.Model):
         current_node = self.current_node
         blueprint = self.blueprint
         workflow = blueprint.workflow
-        head = Workflow.objects.get(workflow = workflow, prev_node = None)
+        head = Node.objects.get(workflow = workflow, prev_node = None)
 
         sender = self.sender
 

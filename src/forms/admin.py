@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import FormBlueprint, FormInstance, FormNotification
+from .models import FormBlueprint, FormInstance, FormNotification, FormInstanceHasComment
 # Register your models here.
 
 class FormBlueprintAdminModel(admin.ModelAdmin):
@@ -40,3 +40,13 @@ class FormNotificationAdminModel(admin.ModelAdmin):
 		model = FormNotification
 
 admin.site.register(FormNotification, FormNotificationAdminModel)
+
+class FormInstanceCommentAdminModel(admin.ModelAdmin):
+	""" Admin Model """
+
+	list_display = ("id",  "sender", "form_instance", "receiver", "active")
+	search_fields =("user", "form_instance", )
+	class Meta:
+		model = FormInstanceHasComment
+
+admin.site.register(FormInstanceHasComment, FormInstanceCommentAdminModel)

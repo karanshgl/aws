@@ -31,7 +31,7 @@ class FormBlueprint(models.Model):
     #creator of the form is captured in the workflow....
     title = models.CharField(max_length=128)
     workflow = models.OneToOneField(Workflow, on_delete = models.CASCADE)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     saved = models.BooleanField(default=False)
 
     def __str__(self):
@@ -251,5 +251,20 @@ class FormNotification(models.Model):
 
     def __str__(self):
         return '{} : {}'.format(self.user, self.form_instance)
+
+
+class FormInstanceHasComment(models.Model):
+    # Manages comments of a form intance
+
+    form_instance = models.ForeignKey(FormInstance, on_delete = models.CASCADE, null = False, blank = False) 
+    sender = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False, blank = False, related_name = 'sender')
+    receiver = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False, blank = False, related_name = 'receiver')
+    comment = models.TextField()
+    active = models.BooleanField(default = True)
+    timestamp = models.DateTimeField(auto_now_add=True, null = False, blank = False)
+
+    def __str__(self):
+        return '{}: {} to {}'.format(form_instance, sender, receiver)
+
 
 

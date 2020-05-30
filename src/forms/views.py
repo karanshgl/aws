@@ -8,9 +8,12 @@ from django.conf import settings
 import datetime
 
 from .forms import FormBlueprintForm
-from .models import FormBlueprint, FormInstance, FormNotification
+from .models import FormBlueprint, FormInstance, FormNotification, FormInstanceHasComment
+from employees.models import Profile
 from workflows.models import Workflow, Node
 from teams.models import TeamHasEmployees
+from django.http import JsonResponse
+
 
 from django.db import transaction
 
@@ -22,11 +25,12 @@ def dashboard(request):
     #separate the form instances into two parts....those that I have seen in the past and those that are now pending with me
 
     try:
-        the_instance = request.user.profile.teamhasemployees
+        user_profile = request.user.profile
+        the_instance = user_profile.teamhasemployees
 
         notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True)
 
-        forms_no_action = [n.form_instance for n in notifications]
+        forms = [(n.form_instance, n.form_instance.is_user_current_node(user_profile)) for n in notifications]
 
         # user_role=the_instance.role
         # user_team=the_instance.team
@@ -37,13 +41,34 @@ def dashboard(request):
 
         #could further divide into active and inactive
         context = {
-            'pending_with_me_form_instances': forms_no_action,
+            'pending_with_me_form_instances': forms,
             'rest_form_instances': FormInstance.objects.all(),
         }
         return render(request, 'forms/dashboard.html', context=context)
     except Exception as e:
         print(e)
         return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
+
+@login_required
+def send_comment(request):
+    user_profile = request.user.profile
+    the_instance = user_profile.teamhasemployees
+
+    try:
+
+        if request.method == 'POST':
+            fi = int(request.POST.get('fi_id'))
+            form_instance = FormInstance.objects.get(pk = fi)
+            receiver_id = int(request.POST.get('receiver'))
+            receiver = Profile.objects.get(pk = receiver_id)
+            comment = request.POST.get('comment')
+
+            comment_instance = FormInstanceHasComment(form_instance = form_instance, sender = user_profile, receiver = receiver)
+            comment_instance.save()
+            return HttpResponse("Successful")
+    except:
+        return HttpResponse("Failed")
+
 
 @login_required
 def fb_all(request):

@@ -53,6 +53,7 @@ class Workflow(models.Model):
         return workflow_nodes
 
 
+
 class EmployeeHasPermission(models.Model):
     # TODO: Table with manages the permissions for workflows
     pass

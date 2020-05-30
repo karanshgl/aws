@@ -19,7 +19,7 @@ class ProfileAdminModel(admin.ModelAdmin):
 	user_last_name.short_description = 'Last Name'
 
 
-	list_display = ("user", user_email, user_first_name, user_last_name)
+	list_display = ("id", "user", user_email, user_first_name, user_last_name)
 
 	search_fields = ("user__username", "user__email",  )
 

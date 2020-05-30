@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block header %}
-    <title>AWS | Forms | Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
-    <script>
-        function showMessage(s) {
+<title>AWS | Forms | Dashboard</title>
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<script>
+    function showMessage(s) {
             alertify.error(s);
         }
+
+    $(document).on("click", ".comment-modal", function () {
+        var fi_id = $(this).data('id');
+        console.log(fi_id);
+        // Assume the list of users
+        var user_list = [{'id': 1, 'username': 'sodhi'}, {'id': 2, 'username': 'somitra'}, {'id': 3, 'username': 'skdas'}]
+        $(".modal-body #fi_id").val( fi_id );
+     
+    });
     </script>
 {%endblock%}
-
 {% block content %}
-    <div class='row'>
+<div class='row'>
     <div class='col-md-1'></div>
     <div class='col-md-10'>
         <br><br>
@@ -21,83 +28,118 @@
         </div>
         <br>
         {% if pending_with_me_form_instances %}
-            <h3>Pending With Me</h3>
-            <table class='styled-table table-hover' >
-                <tr>
-                    <th class='styled-table'>Ref#</th>
-                    <th class='styled-table'>Type</th>
-                    <th class='styled-table'>Status</th> {# show the current node of the form instance#}
-                    <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
-                    <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
-                    <th class='styled-table'>Respond</th>
-                    <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
-                </tr>
-                {% for fi in pending_with_me_form_instances %}
-                    <tr>
-                        <td  class='styled-table'>{{ fi.id  }}</td>
-                        <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
-                        <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
-                        <td class='styled-table'>
-                            <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
-                        </td >
-                        <td class='styled-table'>{{fi.active}}</td>
-                        <td class='styled-table'>
-                            {% if  true %}{#put in the condition to check if this person can respond#}
-                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
-                            {% else %}
-                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
-                            {% endif %}
-                        </td>
-                        <td class='styled-table'>
-                            <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+        <h3>Pending With Me</h3>
+        <table class='styled-table table-hover'>
+            <tr>
+                <th class='styled-table'>Ref#</th>
+                <th class='styled-table'>Type</th>
+                <th class='styled-table'>Status</th> {# show the current node of the form instance#}
+                <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
+                <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
+                <th class='styled-table'>Respond</th>
+                <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
+                <th class='styled-table'>Comment</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
+            </tr>
+            {% for fi, cn in pending_with_me_form_instances %}
+            <tr>
+                <td class='styled-table'>{{ fi.id }}</td>
+                <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
+                <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
+                <td class='styled-table'>
+                    <a href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
+                </td>
+                <td class='styled-table'>{{fi.active}}</td>
+                <td class='styled-table'>
+                    {% if true %}{#put in the condition to check if this person can respond#}
+                    <a href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                    {% else %}
+                    <a href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                    {% endif %}
+                </td>
+                <td class='styled-table'>
+                    <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
+                </td>
+                <td class='styled-table'>
+                    {% if cn %}
+                    <a href="#" data-toggle="modal" data-target="#exampleModal" data-id="{{fi.id}}" class="comment-modal">Comment</a>
+                    {% else %}
+                    Comment
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
         {% else %}
-            <h3>Pending With Me</h3>
-                <h5>Hooray! No forms waiting for your approval or comments!</h5>
+        <h3>Pending With Me</h3>
+        <h5>Hooray! No forms waiting for your approval or comments!</h5>
         {% endif %}
         <br>
         {% if rest_form_instances %}
-            <h3>The Rest</h3>
-            <table class='styled-table'>
-                <tr>
-                    <th class='styled-table'>Ref#</th>
-                    <th class='styled-table'>Type</th>
-                    <th class='styled-table'>Status</th> {# show the current node of the form instance#}
-                    <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
-                    <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
-                    <th class='styled-table'>Respond</th>
-                    <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
-                </tr>
-                {% for fi in rest_form_instances %}
-                    <tr>
-                        <td  class='styled-table'>{{ fi.id  }}</td>
-                        <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
-                        <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
-                        <td class='styled-table'>
-                            <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
-                        </td >
-                        <td class='styled-table'>{{fi.active}}</td>
-                        <td class='styled-table'>
-                            {% if  true %}{#put in the condition to check if this person can respond#}
-                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
-                            {% else %}
-                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
-                            {% endif %}
-                        </td>
-                        <td class='styled-table'>
-                            <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+        <h3>The Rest</h3>
+        <table class='styled-table'>
+            <tr>
+                <th class='styled-table'>Ref#</th>
+                <th class='styled-table'>Type</th>
+                <th class='styled-table'>Status</th> {# show the current node of the form instance#}
+                <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
+                <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
+                <th class='styled-table'>Respond</th>
+                <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
+            </tr>
+            {% for fi in rest_form_instances %}
+            <tr>
+                <td class='styled-table'>{{ fi.id }}</td>
+                <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
+                <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
+                <td class='styled-table'>
+                    <a href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
+                </td>
+                <td class='styled-table'>{{fi.active}}</td>
+                <td class='styled-table'>
+                    {% if true %}{#put in the condition to check if this person can respond#}
+                    <a href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                    {% else %}
+                    <a href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                    {% endif %}
+                </td>
+                <td class='styled-table'>
+                    <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
         {% endif %}
         <br>
-            <h4><a href="{% url 'fb_permitted' %}">Fill a new form</a></h4>
-
+        <h4><a href="{% url 'fb_permitted' %}">Fill a new form</a></h4>
     </div>
     <div class='col-md-1'></div>
+</div>
+<!-- MODAL -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Send Comment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id = "comment-form" method="POST" action="{% url 'send_comment' %}">
+                {% csrf_token %}
+            <div class="modal-body">
+                <input type="hidden" name="fi_id" id = "fi_id" value="">
+                <label for receiver>Send comment to</label>
+                <input class="form-control" type="text" name="receiver" id = "receiver" placeholder="Select the user">
+                <br>
+                <label for="comment">Enter comment</label>
+                <textarea class="form-control" id="comment" name = "comment" rows="3" placeholder="enter the comment"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Send Comment</button>
+            </div>
+            </form>
+        </div>
     </div>
+</div>
 {%endblock%}

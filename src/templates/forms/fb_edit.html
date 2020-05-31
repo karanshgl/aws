@@ -383,8 +383,14 @@ $(document).ready(function(){
             data: {
                 'fb': json, 
             },
+
             success: function () {
-                alert('Form Blueprint Saved Successfully');
+                //var delay=500;
+
+                alert('Form Blueprint Saved Successfully, Click okay to be redirected to dashboard...');
+                // setTimeout(function(){
+                // }, delay);
+                location.href = "/forms/dashboard";
             }
 
         });

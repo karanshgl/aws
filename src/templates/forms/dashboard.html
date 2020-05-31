@@ -81,10 +81,10 @@
                         </td >
                         <td class='styled-table'>{{fi.active}}</td>
                         <td class='styled-table'>
-                            {% if  true %}{#put in the condition to check if this person can respond#}
+                            {% if fi in pending_with_me_form_instances%}
                                 <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
                             {% else %}
-                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                                <a>Not pending with you</a>
                             {% endif %}
                         </td>
                         <td class='styled-table'>

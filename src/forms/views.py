@@ -24,9 +24,17 @@ def dashboard(request):
     try:
         the_instance = request.user.profile.teamhasemployees
 
-        notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True)
+        notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True).order_by('id')
+
 
         forms_no_action = [n.form_instance for n in notifications]
+        final_list=[]
+        for form in forms_no_action:
+            for notification in notifications:
+                if notification.form_instance==form and notification.status=='N':
+                    final_list.append(form)
+                elif notification.form_instance==form:
+                    break
 
         # user_role=the_instance.role
         # user_team=the_instance.team
@@ -37,8 +45,7 @@ def dashboard(request):
 
         #could further divide into active and inactive
         context = {
-            'user': the_instance,
-            'pending_with_me_form_instances': forms_no_action,
+            'pending_with_me_form_instances': final_list,
             'rest_form_instances': FormInstance.objects.all(),
         }
         return render(request, 'forms/dashboard.html', context=context)
@@ -111,7 +118,10 @@ def fb_create(request):
         fb_object.saved = True
         fb_object.save()
 
-    return HttpResponse('Successfull')
+    context={
+                    'message': "Response Failed"
+                }
+    return render(request, 'forms/redirect_to_dashboard.html', context = context)
 
 @login_required
 def fb_preview(request, fb_id):
@@ -218,10 +228,16 @@ def fi_respond(request, fi_id):
                 fi_object.add_response(data)
                 fi_object.send_forward(sender)
                 fi_object.save()
-            return HttpResponse("Response Successful")
+            context={
+                    'message': "Response Succesful"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
         except Exception as e:
             print(e)
-            return HttpResponse('Response Failed')
+            context={
+                    'message': "Response Failed"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
     else:
         context = {
             'section_html': section_html,

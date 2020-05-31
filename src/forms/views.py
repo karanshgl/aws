@@ -42,7 +42,7 @@ def dashboard(request):
         }
         return render(request, 'forms/dashboard.html', context=context)
     except Exception as e:
-        print(e)
+        print("in dashboard: "+str(e))
         return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
 
 @login_required
@@ -135,8 +135,12 @@ def fb_available_to_instantiate(request):
     #fetch role of the user
     try:
         user_role=TeamHasEmployees.objects.get(employee= request.user.profile).role
-
+    except Exception as e:
+        print("in fb_available_to_instantiate: "+str(e))
+        return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
         #fetch form blueprints whose starting node has the role of the user. Only those form blueprints can be used to instantiate a form.
+    
+    try:
         head_nodes= Node.objects.filter(associated_role=user_role, prev_node = None) 
         forms = [node.get_blueprint() for node in head_nodes]
         context ={
@@ -144,8 +148,9 @@ def fb_available_to_instantiate(request):
         }
         return render(request, 'forms/fb_permitted.html', context=context)
     except Exception as e:
-        print(e)
-        return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
+        print("in fb_available_to_instantiate: "+str(e))
+        return render(request, 'message.html', {'message': "No forms available."})
+
 
 
 @login_required

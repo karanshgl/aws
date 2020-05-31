@@ -12,9 +12,12 @@ def get_node_user(node, sender):
 
 	if role and team:
 		# Both are present
-		the_instance = TeamHasEmployees.objects.get(role = role, team = team)
-		user = the_instance.employee
-		return user
+		try:
+			the_instance = TeamHasEmployees.objects.get(role = role, team = team)
+			user = the_instance.employee
+			return user
+		except:
+			return None
 	elif team is None:
 		# You just have the role, assume same team
 		s_the = TeamHasEmployees.objects.get(employee = sender)

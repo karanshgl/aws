@@ -37,6 +37,7 @@ def dashboard(request):
 
         #could further divide into active and inactive
         context = {
+            'user': the_instance,
             'pending_with_me_form_instances': forms_no_action,
             'rest_form_instances': FormInstance.objects.all(),
         }
@@ -142,7 +143,7 @@ def fb_available_to_instantiate(request):
     
     try:
         head_nodes= Node.objects.filter(associated_role=user_role, prev_node = None) 
-        forms = [node.get_blueprint() for node in head_nodes]
+        forms = [node.get_blueprint() for node in head_nodes if node.get_blueprint().active==True]
         context ={
             'form_blueprints':forms
         }
@@ -178,10 +179,16 @@ def fi_create(request, fb_id):
                 fi_object.create_document(data)
                 fi_object.send_forward(sender)
                 fi_object.save()
-            return HttpResponse("Form Instance Created")
+                context={
+                    'message': "Form Instance Created"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
         except Exception as e:
             print(e)
-            return HttpResponse('Creation Failed')
+            context={
+                    'message': "Creation Failed"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
     else:
         #add the form html tag and the submit button to the section html
         context = {

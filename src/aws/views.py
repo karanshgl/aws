@@ -29,6 +29,7 @@ def profile(request):
         "role": user_role,
         "team": user_team
     }
+    print("in profile: role: "+str(user_role))
     return render(request, 'aws/accounts/profile.html', context=context)
 
 @login_required

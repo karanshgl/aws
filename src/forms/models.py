@@ -71,6 +71,8 @@ class FormBlueprint(models.Model):
             {"$set": fb}
         )
         #update the section ids in the nodes of the workflow
+        print(fb['sections'])
+        print(len(fb['sections']))
         for i, section in enumerate(fb['sections'], 0):
             node_id = section['node_id']
             node = Node.objects.get(id=node_id)
@@ -97,9 +99,14 @@ class FormBlueprint(models.Model):
         _fb = collection.find_one({'id': self.id})
         client.close()
         fb_parser = FormBlueprintParser()
-        html, node_id=fb_parser.parse_section(_fb, section_id)
+        html, node_id = fb_parser.parse_section(_fb, section_id)
+        node_html = ""
+        for i, section in enumerate(_fb['sections'], 0):
+            if(section['node_id'] == node_id):
+                html, id = fb_parser.parse_section(_fb, i+1)
+                node_html += html
 
-        return html, node_id
+        return node_html, node_id
 
 
 
@@ -175,7 +182,7 @@ class FormInstance(models.Model):
         # Create an instance in form notifcation
 
         the_sender = sender.teamhasemployees
-        notification, created = FormNotification.objects.get_or_create(user = the_sender, form_instance = self) 
+        notification, created = FormNotification.objects.get_or_create(user = the_sender, form_instance = self)
         notification.status = 'F'
         notification.save()
 
@@ -200,7 +207,7 @@ class FormInstance(models.Model):
     def send_backward(self):
         if self.current_node.prev_node:
             self.current_node = self.current_node.prev_node
-            return True 
+            return True
         return False
 
     def is_user_in_workflow(self, user):
@@ -231,7 +238,7 @@ class FormInstance(models.Model):
 
         # Now the sender is the current node user
         return user == sender
-        
+
 
 
 class FormNotification(models.Model):
@@ -251,5 +258,3 @@ class FormNotification(models.Model):
 
     def __str__(self):
         return '{} : {}'.format(self.user, self.form_instance)
-
-

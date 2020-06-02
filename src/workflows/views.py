@@ -79,10 +79,17 @@ def create_workflow(request):
 		except ValueError as err:
 			print(err)
 			return HttpResponse('Fail - ' + str(err))
+			context={
+				'message': 'Fail - ' + str(err)
+			}
+			return render(request, 'forms/redirect_to_dashboard.html', context = context)
 
 		except Exception as e:
 			print(e)
-			return HttpResponse('Fail')
+			context={
+				'message': "Failed"
+			}
+			return render(request, 'forms/redirect_to_dashboard.html', context = context)
 
 	#making a list of roles and teams for rendering in searchable dropdown
 	role_list=list(Role.objects.all())

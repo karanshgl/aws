@@ -4,7 +4,7 @@ from teams.models import TeamHasEmployees, Team
 from employees.models import Role
 
 def get_node_user(node, sender):
-	# Returns the user assossitated with the given node and the sender
+	# Returns the user associated with the given node and the sender
 
 	# TODO: DEAL WITH MULTIPLE POSSIBLE USERS
 	role = node.associated_role
@@ -12,9 +12,12 @@ def get_node_user(node, sender):
 
 	if role and team:
 		# Both are present
-		the_instance = TeamHasEmployees.objects.get(role = role, team = team)
-		user = the_instance.employee
-		return user
+		try:
+			the_instance = TeamHasEmployees.objects.get(role = role, team = team)
+			user = the_instance.employee
+			return user
+		except:
+			return None
 	elif team is None:
 		# You just have the role, assume same team
 		s_the = TeamHasEmployees.objects.get(employee = sender)
@@ -29,8 +32,10 @@ def get_node_user(node, sender):
 				# Sender and do whatever they want, returns sender themself
 				return sender
 			d_team = s_team.parent
-
-		d_the = TeamHasEmployees.objects.get(team = d_team, role = d_role)
+		try:
+			d_the = TeamHasEmployees.objects.get(team = d_team, role = d_role)
+		except:
+			return None
 
 		return d_the.employee
 

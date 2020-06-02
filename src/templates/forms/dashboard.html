@@ -81,39 +81,40 @@
         {% endif %}
         <br>
         {% if rest_form_instances %}
-        <h3>The Rest</h3>
-        <table class='styled-table'>
-            <tr>
-                <th class='styled-table'>Ref#</th>
-                <th class='styled-table'>Type</th>
-                <th class='styled-table'>Status</th> {# show the current node of the form instance#}
-                <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
-                <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
-                <th class='styled-table'>Respond</th>
-                <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
-            </tr>
-            {% for fi in rest_form_instances %}
-            <tr>
-                <td class='styled-table'>{{ fi.id }}</td>
-                <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
-                <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
-                <td class='styled-table'>
-                    <a href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
-                </td>
-                <td class='styled-table'>{{fi.active}}</td>
-                <td class='styled-table'>
-                    {% if true %}{#put in the condition to check if this person can respond#}
-                    <a href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
-                    {% else %}
-                    <a href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
-                    {% endif %}
-                </td>
-                <td class='styled-table'>
-                    <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+
+            <h3>The Rest</h3>
+            <table class='styled-table'>
+                <tr>
+                    <th class='styled-table'>Ref#</th>
+                    <th class='styled-table'>Type</th>
+                    <th class='styled-table'>Status</th> {# show the current node of the form instance#}
+                    <th class='styled-table'>View Detail</th> {#show all the repsonses of the instance#}
+                    <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
+                    <th class='styled-table'>Respond</th>
+                    <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
+                </tr>
+                {% for fi in rest_form_instances %}
+                    <tr>
+                        <td  class='styled-table'>{{ fi.id  }}</td>
+                        <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
+                        <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
+                        <td class='styled-table'>
+                            <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
+                        </td >
+                        <td class='styled-table'>{{fi.active}}</td>
+                        <td class='styled-table'>
+                            {% if fi in pending_with_me_form_instances%}
+                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                            {% else %}
+                                <a>Not pending with you</a>
+                            {% endif %}
+                        </td>
+                        <td class='styled-table'>
+                            <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
         {% endif %}
         <br>
         <h4><a href="{% url 'fb_permitted' %}">Fill a new form</a></h4>

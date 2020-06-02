@@ -28,9 +28,16 @@ def dashboard(request):
         user_profile = request.user.profile
         the_instance = user_profile.teamhasemployees
 
-        notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True)
+        notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True).order_by('id')
 
-        forms = [(n.form_instance, n.form_instance.is_user_current_node(user_profile)) for n in notifications]
+        forms_no_action = [n.form_instance for n in notifications]
+        final_list=[]
+        for form in forms_no_action:
+            for notification in notifications:
+                if notification.form_instance==form and notification.status=='N':
+                    final_list.append(form)
+                elif notification.form_instance==form:
+                    break
 
         # user_role=the_instance.role
         # user_team=the_instance.team
@@ -41,12 +48,12 @@ def dashboard(request):
 
         #could further divide into active and inactive
         context = {
-            'pending_with_me_form_instances': forms,
+            'pending_with_me_form_instances': final_list,
             'rest_form_instances': FormInstance.objects.all(),
         }
         return render(request, 'forms/dashboard.html', context=context)
     except Exception as e:
-        print(e)
+        print("in dashboard: "+str(e))
         return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
 
 @login_required
@@ -135,7 +142,10 @@ def fb_create(request):
         fb_object.saved = True
         fb_object.save()
 
-    return HttpResponse('Successfull')
+    context={
+                    'message': "Response Failed"
+                }
+    return render(request, 'forms/redirect_to_dashboard.html', context = context)
 
 @login_required
 def fb_preview(request, fb_id):
@@ -160,17 +170,22 @@ def fb_available_to_instantiate(request):
     #fetch role of the user
     try:
         user_role=TeamHasEmployees.objects.get(employee= request.user.profile).role
-
+    except Exception as e:
+        print("in fb_available_to_instantiate: "+str(e))
+        return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
         #fetch form blueprints whose starting node has the role of the user. Only those form blueprints can be used to instantiate a form.
+    
+    try:
         head_nodes= Node.objects.filter(associated_role=user_role, prev_node = None) 
-        forms = [node.get_blueprint() for node in head_nodes]
+        forms = [node.get_blueprint() for node in head_nodes if node.get_blueprint().active==True]
         context ={
             'form_blueprints':forms
         }
         return render(request, 'forms/fb_permitted.html', context=context)
     except Exception as e:
-        print(e)
-        return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
+        print("in fb_available_to_instantiate: "+str(e))
+        return render(request, 'message.html', {'message': "No forms available."})
+
 
 
 @login_required
@@ -198,10 +213,16 @@ def fi_create(request, fb_id):
                 fi_object.create_document(data)
                 fi_object.send_forward(sender)
                 fi_object.save()
-            return HttpResponse("Form Instance Created")
+                context={
+                    'message': "Form Instance Created"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
         except Exception as e:
             print(e)
-            return HttpResponse('Creation Failed')
+            context={
+                    'message': "Creation Failed"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
     else:
         #add the form html tag and the submit button to the section html
         context = {
@@ -231,10 +252,16 @@ def fi_respond(request, fi_id):
                 fi_object.add_response(data)
                 fi_object.send_forward(sender)
                 fi_object.save()
-            return HttpResponse("Response Successful")
+            context={
+                    'message': "Response Succesful"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
         except Exception as e:
             print(e)
-            return HttpResponse('Response Failed')
+            context={
+                    'message': "Response Failed"
+                }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
     else:
         context = {
             'section_html': section_html,

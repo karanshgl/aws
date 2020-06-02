@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %} 
+<p>{{message}}</p> 
+<p>You will be redirected to the dashboard page in 5 seconds, if not <a href="/forms/dashboard">click here</a></p> 
+<meta http-equiv="refresh" content="5;url=/forms/dashboard">
+{% endblock %}

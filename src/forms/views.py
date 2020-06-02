@@ -28,16 +28,17 @@ def dashboard(request):
         user_profile = request.user.profile
         the_instance = user_profile.teamhasemployees
 
-        notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True).order_by('id')
+        notifications = FormNotification.objects.filter(user = the_instance, form_instance__active = True, status = 'N').order_by('id')
 
-        forms_no_action = [n.form_instance for n in notifications]
-        final_list=[]
-        for form in forms_no_action:
-            for notification in notifications:
-                if notification.form_instance==form and notification.status=='N':
-                    final_list.append(form)
-                elif notification.form_instance==form:
-                    break
+
+        forms_no_action = [(n.form_instance, n.form_instance.is_user_current_node(user_profile)) for n in notifications]
+        # final_list=[]
+        # for form, cn in forms_no_action:
+        #     for notification in notifications:
+        #         if notification.form_instance==form and notification.status=='N':
+        #             final_list.append((form,cn))
+        #         elif notification.form_instance==form:
+        #             break
 
         # user_role=the_instance.role
         # user_team=the_instance.team
@@ -48,7 +49,7 @@ def dashboard(request):
 
         #could further divide into active and inactive
         context = {
-            'pending_with_me_form_instances': final_list,
+            'pending_with_me_form_instances': forms_no_action,
             'rest_form_instances': FormInstance.objects.all(),
         }
         return render(request, 'forms/dashboard.html', context=context)

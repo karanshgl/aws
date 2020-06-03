@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import dashboard, fb_all, fb_edit, fb_create, fb_preview, fb_toggle_activation, fi_create, fi_respond, fi_detail, fi_nudge, fb_available_to_instantiate, send_comment
 from rest_framework.routers import DefaultRouter
-from .api import ListWorkflowUsers
+from .api import ListWorkflowUsers, ListTeamsHavingRole, ListRolesInTeam
 
 urlpatterns = [
 	path('dashboard/', dashboard, name='dashboard',),
@@ -17,4 +17,6 @@ urlpatterns = [
 	path('fb_permitted', fb_available_to_instantiate, name='fb_permitted'),
 	path('fi_comment/', send_comment, name='send_comment'),
 	path('api/form_instance/<int:fi_id>/users/', ListWorkflowUsers.as_view(), name = 'list_workflow_users'),
+	path('api/roles_in_team/<int:team_id>/roles/', ListRolesInTeam.as_view(), name = 'list_roles_in_team'),
+	path('api/teams_have_role/<int:role_id>/teams/', ListTeamsHavingRole.as_view(), name = 'list_teams_having_role'),
 ]

@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
     var template = $("#cloneIt");
-    const template_clone=template.clone();
+    const template_clone = template.clone();
     //console.log(template)
 	// Base Variables
     var node_count = 1;

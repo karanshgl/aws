@@ -17,6 +17,6 @@ urlpatterns = [
 	path('fb_permitted', fb_available_to_instantiate, name='fb_permitted'),
 	path('fi_comment/', send_comment, name='send_comment'),
 	path('api/form_instance/<int:fi_id>/users/', ListWorkflowUsers.as_view(), name = 'list_workflow_users'),
-	path('api/roles_in_team/<int:team_id>/roles/', ListRolesInTeam.as_view(), name = 'list_roles_in_team'),
-	path('api/teams_have_role/<int:role_id>/teams/', ListTeamsHavingRole.as_view(), name = 'list_teams_having_role'),
+	path('api/roles_in_team/<slug:team_name>/roles/', ListRolesInTeam.as_view(), name = 'list_roles_in_team'),
+	path('api/teams_have_role/<slug:role_name>/teams/', ListTeamsHavingRole.as_view(), name = 'list_teams_having_role'),
 ]

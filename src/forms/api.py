@@ -35,11 +35,12 @@ class ListTeamsHavingRole(APIView):
     authentication_classes = []
     permission_classes = []
 
-    def get(self, request, role_id, format=None):
+    def get(self, request, role_name, format=None):
         """
         Return a list of all teams.
         """
-        teams = TeamHasEmployees.objects.filter(role__id = role_id)
+        role_name = role_name.replace("-"," ")
+        teams = TeamHasEmployees.objects.filter(role__role_name = role_name)
 
         queryset = [{
             'id': team.team.id,
@@ -56,11 +57,12 @@ class ListRolesInTeam(APIView):
     authentication_classes = []
     permission_classes = []
 
-    def get(self, request, team_id, format=None):
+    def get(self, request, team_name, format=None):
         """
         Return a list of all teams.
         """
-        teams = TeamHasEmployees.objects.filter(team__id = team_id)
+        team_name = team_name.replace("-"," ")
+        teams = TeamHasEmployees.objects.filter(team__team_name = team_name)
 
         queryset = [{
             'id': role.role.id,

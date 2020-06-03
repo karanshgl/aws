@@ -51,41 +51,40 @@
 {%endblock%}
 {% block content %}
 <div class="container-fluid">
+    <form method="POST" id="workflow_form">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Title" required>
+        <div id="node_list" class="row">
+          <div id="cloneIt">
+            <div class="col-2" id="node_1_head" name="node_1_head">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Node 1</h5>
+                        <p class="card-text">Please select a <strong>role</strong> and its <strong>team</strong>:</p>
+                        <label for="roles">Role : </label><br>
+                        <select type="text" name="node_1_role" width="200 px;" placeholder="Select Role" data-search="true" required="True" id="node_1_role" >
+                            {%for item in role_list%}
+                            <option value="{{ item }}">{{item}}</option>
+                            print({{ item }})
+                            {% endfor %}
 
-        <form method="POST" id="workflow_form">
-            {% csrf_token %}
-            <input type="text" name="title" placeholder="Title" required>
-            <div id="node_list" class="row">
-              <div id="cloneIt">
-                <div class="col-2" id="node_1_head" name="node_1_head">
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Node 1</h5>
-                            <p class="card-text">Please select a <strong>role</strong> and its <strong>team</strong>:</p>
-                            <label for="roles">Role : </label><br>
-                            <select type="text" name="node_1_role" width="200 px;" placeholder="Select Role" data-search="true" required="True" id="node_1_role" >
-                                {%for item in role_list%}
-                                <option value="{{ item }}">{{item}}</option>
-                                print({{ item }})
-                                {% endfor %}
-
-                            </select>
-                            <label for="teams">Team : </label><br>
-                            <select name="node_1_team" width="200" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
-                                <option value="None">None</option>
-                                {%for item in team_list%}
-                                <option value="{{ item }}">{{item}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                        </select>
+                        <label for="teams">Team : </label><br>
+                        <select name="node_1_team" width="200" placeholder="Select Team" data-search="true" type="text" id="node_1_team">
+                            <option value="None">None</option>
+                            {%for item in team_list%}
+                            <option value="{{ item }}">{{item}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
-              </div>
             </div>
-            <button id="btnAddNode" type="button">ADD</button>
-            <button id="btnSubmit" type="button">CREATE</button>
-            <button id="btnDeleteNode" type="button">Delete</button>
-        </form>
+          </div>
+        </div>
+        <button id="btnAddNode" type="button">ADD</button>
+        <button id="btnSubmit" type="button">CREATE</button>
+        <button id="btnDeleteNode" type="button">Delete</button>
+    </form>
 </div>
 {%endblock%}
 {% block footer %}

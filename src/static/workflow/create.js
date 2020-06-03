@@ -40,12 +40,13 @@ $(document).ready(function() {
         var new_node = template_clone.clone();
 
         // Update the template
-        //console.log(node_count)
+        // console.log(node_count)
         new_node.find(baseTitle).text("Node {0}".f(node_count));
         new_node.find(baseInputRole).attr("name", "node_{0}_role".f(node_count));
         //new_node.find(baseInputRole).attr("class", "");
         new_node.find(baseInputTeam).attr("name", "node_{0}_team".f(node_count));
         new_node.find(headNode).attr("id", "node_{0}_head".f(node_count));
+        new_node.find(headNode).attr("name", "node_{0}_head".f(node_count));
         new_node.find(baseInputRoleId).attr("id", "node_{0}_role".f(node_count));
         new_node.find(baseInputTeamId).attr("id", "node_{0}_team".f(node_count));
 
@@ -72,6 +73,34 @@ $(document).ready(function() {
         $("#node_{0}_head".f(node_count)).remove();
         node_count = node_count - 1;
       }
+    });
+
+    $("#node_{0}_role".f(node_count)).change(function() {
+        console.log(node_count);
+        var role_name = $(this).val().replace(" ","-");
+        var url = "http://127.0.0.1:8000/forms/api/teams_have_role/" + role_name + "/teams/";
+        var teams = [];
+
+        $.ajax({url: url, success: function(result){
+            $.each(result, function (index, value) {
+                teams.push(value.team);
+            });
+        }});
+        console.log(teams);
+    });
+
+    $("#node_{0}_team".f(node_count)).change(function() {
+        console.log(node_count);
+        var team_name = $(this).val().replace(" ","-");
+        var url = "http://127.0.0.1:8000/forms/api/roles_in_team/" + team_name + "/roles/";
+        var roles = [];
+
+        $.ajax({url: url, success: function(result){
+            $.each(result, function (index, value) {
+                roles.push(value.role);
+            });
+        }});
+        console.log(roles);
     });
 
 });

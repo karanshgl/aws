@@ -17,7 +17,7 @@ def create_workflow(request):
 	if request.method == 'POST':
 		form_data = request.POST
 		print(form_data)
-		
+
 		count = int(form_data['count'][0])
 
 		# CREATING DICT FOR ROLE-TEAM PAIR
@@ -30,7 +30,7 @@ def create_workflow(request):
 		is_loop = False
 
 		for i in range(1, count+1):
-			role_input = NODE_ROLE_FORMAT.format(i) 
+			role_input = NODE_ROLE_FORMAT.format(i)
 			team_input = NODE_TEAM_FORMAT.format(i)
 
 			if team_input != 'None':
@@ -39,7 +39,7 @@ def create_workflow(request):
 					is_loop = True
 				role_team_pairs.append(role_team_pair)
 
-		
+
 		title = form_data['title']
 		user = Profile.objects.get(user = request.user)
 

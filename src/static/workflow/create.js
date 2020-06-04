@@ -75,32 +75,42 @@ $(document).ready(function() {
       }
     });
 
-    $("#node_{0}_role".f(node_count)).change(function() {
-        console.log(node_count);
-        var role_name = $(this).val().replace(" ","-");
+    $("[id=node_list]").on('change', "[id^=node_][id$=_role]",function() {
+        var node_id = $(this)[0].id;
+        var role_name = $(this).val().replace(/ /g, "-");
         var url = "http://127.0.0.1:8000/forms/api/teams_have_role/" + role_name + "/teams/";
         var teams = [];
+        var node_select_id = node_id.replace("role", "team");
+        var options = '';
 
         $.ajax({url: url, success: function(result){
             $.each(result, function (index, value) {
                 teams.push(value.team);
             });
+            for (var i = 0; i < teams.length; i++) {
+                options += '<option value="' + teams[i] + '">' + teams[i] + '</option>';
+            }
+            $("select#{0}".format(node_select_id)).html(options);
         }});
-        console.log(teams);
     });
 
-    $("#node_{0}_team".f(node_count)).change(function() {
-        console.log(node_count);
-        var team_name = $(this).val().replace(" ","-");
+    $("[id=node_list]").on('change', "[id^=node_][id$=_team]",function() {
+        var node_id = $(this)[0].id;
+        var team_name = $(this).val().replace(/ /g, "-");
         var url = "http://127.0.0.1:8000/forms/api/roles_in_team/" + team_name + "/roles/";
         var roles = [];
+        var node_select_id = node_id.replace("team", "role");
+        var options = '';
 
         $.ajax({url: url, success: function(result){
             $.each(result, function (index, value) {
                 roles.push(value.role);
             });
+            for (var i = 0; i < roles.length; i++) {
+                options += '<option value="' + roles[i] + '">' + roles[i] + '</option>';
+            }
+            $("select#{0}".format(node_select_id)).html(options)
         }});
-        console.log(roles);
     });
 
 });

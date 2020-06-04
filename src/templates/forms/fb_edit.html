@@ -9,398 +9,384 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
 <script>
     let fb_id = parseInt("{{ fb_object.pk }}");
-   
+
 
     class FormBlueprint{
-    constructor(id){
-        this.id=id;
-        this.sections = new Array();
-        
-    }
-
-
-    addSection(section){
-        this.sections.push(section);
-    }
-}
-//the Field class
-class Field{
-    constructor(id, type, title, required){
-        this.id = id;
-        this.type = type;
-        this.title = title;
-        this.required = required;
-        this.options = new Array();
-        this.option_count = 0;
-    }
-
-    addOption(option){
-        this.options.push(option);
-        this.option_count += 1;
-    }
-}
-//the Section class
-class Section{
-    constructor(id,role,team, node_id, section_name){
-        this.id = id;
-        this.section_name = section_name;
-        this.role = role;
-        this.node_id = node_id;
-        this.team = team;
-        this.fields = new Array();
-        this.option_qs = 0;
-    }
-
-
-    addField(field){
-        this.fields.push(field);
-    }
-}
-
-class Option{
-    constructor(name, value){
-        this.name = name;
-        this.value = value;
-    }
-}
-
-$(document).ready(function(){
-
-    console.log("Hello");
-    $("#section_node").select2({
-
-    });
-    //the section the user is adding fields to right now
-    let curr_section = 0;
-
-    //the number of options currently added in the MCQS/MCQM types of questions
-    let curr_options_num=0;
-
-    //previous field type added
-    let prev_field_added ='';
-    $("#add_option_button").prop("disabled", true);
-
-    //create the form object
-    let fb = new FormBlueprint(fb_id);
-
-    //utility function to convert ID to selector
-    function removeWhitespace(text){
-        return text.replace(/ /g,'');
-    }
-
-    function getSelectorByID(id){
-        return "#"+id;
-    }
-    //using the section_<curr_section> to name the sections of the form
-    function getCurrSectionID(sid){
-        return "section_"+String(curr_section);
-    }
-
-    //function for adding a section in the form
-    function addSection(){
-        var temp=$("#section_node")
-        var section_name = $("#section_name").val()
-        temp=temp.val()
-        temp= JSON5.parse(temp)
-        curr_section+=1;
-        new_html = "<div class='card'><div class='card-header bg-transparent'><h4>"+section_name+"</h4>"+"<h6 class='text-secondary'><i>Associated Node:"+temp['sno']+"</i></h6></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section>";
-
-        add_field_form = $("#add_field_form").clone();
-        add_field_form.find('div[name="add_field_template"]').attr("id", "add_field_form_" + String(curr_section));
-        new_html += add_field_form.html();
-        new_html += "</div></div><br>";
-        $("#dynamic-form").append(new_html);
-    
-        //add the section in the form object as well
-        let section = new Section('section_'+String(curr_section),temp['role'],temp['team'], temp['node_id'], section_name);
-        fb.addSection(section);
-
-    }
-
-    //function for adding a string field to the dynamic form
-    function addStrngField(title, required, section_id){
-        section_selector = getSelectorByID(section_id);
-        var index = parseInt(section_id.replace('section_', ''));
-        let field_id = section_id+"_"+removeWhitespace(title)+'_strng';
-        let header_html = "<div class='form-group>"
-        let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
-        let input_html="";
-        if (required==true)
-            input_html = "<input class='form-control' type='text' id='"+field_id+"' required='required'><br>";
-        else
-            input_html = "<input class='form-control' type='text' id='"+field_id+"'><br>";
-        let tail_html = "</div>"
-
-        $(section_selector).append(header_html+label_html+input_html+tail_html);
-
-        //create the field object for JS object
-        let field = new Field(field_id, 'strng', title, required);
-        //add this field to the section
-        fb.sections[index-1].addField(field);
-    }
-    //this function is called when the user adds an integer field to the form
-    function addIntgrField(title, required, section_id){
-        section_selector = getSelectorByID(section_id);
-        var index = parseInt(section_id.replace('section_', ''));
-        let field_id = section_id+"_"+removeWhitespace(title)+'_intgr';
-        let header_html = "<div class='form-group>"
-        let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
-        let input_html="";
-        if (required==true)
-            input_html = "<input class='form-control' type='number' id='"+field_id+"' required='required'><br>";
-        else
-            input_html = "<input class='form-control' type='number' id='"+field_id+"'><br>";
-        let tail_html = "</div>"
-
-        $(section_selector).append(header_html+label_html+input_html+tail_html);
-        //create the field object for JS object
-        let field = new Field(field_id, 'intgr', title, required);
-        //add this field to the section
-        fb.sections[index-1].addField(field);
-    }
-    //this function is called when the user adds a file field
-    function addFLField(title, required, section_id){
-        section_selector = getSelectorByID(section_id);
-        var index = parseInt(section_id.replace('section_', ''));
-        let field_id = section_id+"_"+removeWhitespace(title)+'_fl';
-        let header_html = "<div class='form-group>"
-        let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
-        let input_html="";
-        if (required==true)
-            input_html = "<input class='form-control-file' type='file' id='"+field_id+"' required='required'><br>";
-        else
-            input_html = "<input class='form-control-file' type='file' id='"+field_id+"'><br>";
-        let tail_html = "</div>"
-
-        $(section_selector).append(header_html+label_html+input_html+tail_html);
-        //create the field object for JS object
-        let field = new Field(field_id, 'fl', title, required);
-        //add this field to the section
-        fb.sections[index-1].addField(field);
-    }
-    //this function is called when the user adds a mcqs field to the form
-    function addMCQSField(title, required, section_id){
-        section_selector = getSelectorByID(section_id);
-        var index = parseInt(section_id.replace('section_', ''));
-        
-        // Increase number of option questions
-        var question_id = fb.sections[index-1].option_qs;
-        fb.sections[index-1].option_qs += 1;
-
-        let field_id = section_id+"_"+removeWhitespace(title)+'_mcqs';
-        //means add p element as a question
-        let new_html = "<div id='"+field_id+"'><p>"+title+":</p> <div class = 'col-md-12'>";
-
-        add_option_form = $("#add_option_form").clone();
-        add_option_form.find('div[name="add_option_template"]').attr("id", "add_option_form_" + String(index) + "-" + String(question_id) + "-mcqs");
-        new_html += add_option_form.html();
-
-        new_html += "</div></div> <br>";
-
-        $(section_selector).append(new_html);
-
-        //create the field object for JS object
-        let field = new Field(field_id, 'mcqs', title, required);
-        //add this field to the section
-        fb.sections[index-1].addField(field);
-    }
-    //this function is called when an option is to be added to the mcqs field
-    function addMCQSOption(field_id, option, section_id){
-        //this function is called when an option is added to a mcqs field
-        //get the id of the div containing the question
-        var index = section_id;
-        let option_name = field_id+"o";
-       
-        //now append the options to the MCQS div
-        //radio buttons must have the same name value for grouping
-        let option_html = "";
-        let header_html = "<div class='form-check'>";
-        
-        option_html="<label class='form-check-label'><input type='radio' name='"+option_name+"' value='"+option+"' >"+option+"</label><br>";
-        
-        let tail_html ="</div>";
-        $(getSelectorByID(field_id)).append(header_html+option_html+tail_html);
-        
-        let _option = new Option(option_name, option);
-        //add the option
-        fb.sections[index-1].fields[fb.sections[index-1].fields.length-1].addOption(_option);
-
-
-    }
-
-    //this function is called when the user adds a mcqm field to the form
-    function addMCQMField(title, required, section_id){
-        section_selector = getSelectorByID(section_id);
-        var index = parseInt(section_id.replace('section_', ''));
-
-        var question_id = fb.sections[index-1].option_qs;
-        fb.sections[index-1].option_qs += 1;
-
-        let field_id = section_id+"_"+removeWhitespace(title)+'_mcqm';
-        //means add p element as a question
-        let new_html = "<div id='"+field_id+"'><p>"+title+":</p> <div class = 'col-md-12'>";
-
-        add_option_form = $("#add_option_form").clone();
-        add_option_form.find('div[name="add_option_template"]').attr("id", "add_option_form_" + String(index) + "-" + String(question_id)  + "-mcqm" );
-        new_html += add_option_form.html();
-
-        new_html += "</div></div> <br>";
-
-        $(section_selector).append(new_html);
-
-        //create the field object for JS object
-        let field = new Field(field_id, 'mcqm', title, required);
-        //add this field to the section
-        fb.sections[index-1].addField(field);
-    }
-
-    //this function is called when an option is to be added to the mcqs field
-    function addMCQMOption(field_id, option, section_id){
-        //this function is called when an option is added to a mcqm field
-        //get the id of the div containing the question
-        var index = section_id;
-   
-        let option_name = field_id+"o";
-        //now append the options to the MCQS div
-        //radio buttons must have the same name value for grouping
-        let header_html = "<div class='form-check'>";
-        let option_html = "";
-        
-        option_html="<label class='form-check-label'><input type='checkbox' name='"+option_name+"' value='"+option+"' >"+option+"</label><br>";
-    
-        let tail_html ="</div>";
-
-        $(getSelectorByID(field_id)).append(header_html+option_html+tail_html);
-        //add the option
-        let _option = new Option(option_name, option);
-        fb.sections[index-1].fields[fb.sections[index-1].fields.length-1].addOption(_option);
-
-
-    }
-
-    $("#add_section").click(function(){
-        addSection();
-    });
-
-    $(document).on('click', "input[name='Add Field']", function(event){
-        // NEW FUNCTION
-        var main_div = $(this).parent().parent().parent();
-        var section_id = "section_" + main_div.attr('id').replace('add_field_form_', '');
-
-        let selected = main_div.find('select[name="type_of_field"').val();
-        let title = main_div.find("input[name='title_of_field'").val();
-        let required = main_div.find("input[name='required_field'").is(":checked");
-
-
-        prev_field_added = selected;
-
-        //if field type is string...
-        if (selected==="strng"){
-            //inject code in the dynamic-form for this field
-            addStrngField(title, required, section_id);
-        }
-        //if field type is int...
-        else if(selected=='intgr'){
-            addIntgrField(title, required, section_id);
-        }
-        //if field type is mcqs....
-        else if(selected=='mcqs'){
-            
-            addMCQSField(title, required, section_id);
-        }
-        //if field type is mcqm...
-        else if(selected=='mcqm'){
-            
-            addMCQMField(title, required, section_id);
-
-        }
-        //if field type is file upload...
-        else if(selected=='fl'){
-            addFLField(title, required, section_id);
-            $("#add_option_button").prop("disabled", true);
-
-        }
-        else{
-            event.preventDefault();
-            throw "Error: Invalid Field Type";
+        constructor(id){
+            this.id=id;
+            this.sections = new Array();
         }
 
-    });
+        addSection(section){
+            this.sections.push(section);
+        }
+    }
 
-   
+    '''the Field class'''
+    class Field{
+        constructor(id, type, title, required){
+            this.id = id;
+            this.type = type;
+            this.title = title;
+            this.required = required;
+            this.options = new Array();
+            this.option_count = 0;
+        }
 
-    $(document).on('click', "input[name='Add Option']", function(event){
-        var main_div = $(this).parent().parent().parent();
+        addOption(option){
+            this.options.push(option);
+            this.option_count += 1;
+        }
+    }
 
-        var section_question_split = main_div.attr('id').replace('add_option_form_', '').split("-");
-        var section_id = section_question_split[0];
-        var question_id = section_question_split[1];
-        var type = section_question_split[2];
+    '''the Section class'''
+    class Section{
+        constructor(id,role,team, node_id, section_name){
+            this.id = id;
+            this.section_name = section_name;
+            this.role = role;
+            this.node_id = node_id;
+            this.team = team;
+            this.fields = new Array();
+            this.option_qs = 0;
+        }
 
-        var field_id = main_div.parent().parent().attr('id');
+        addField(field){
+            this.fields.push(field);
+        }
+    }
 
-        let option = main_div.find("input[name='option_text'").val();
+    '''the Option class'''
+    class Option{
+        constructor(name, value){
+            this.name = name;
+            this.value = value;
+        }
+    }
 
-        console.log(option, type, )
-        if(type=='mcqs')addMCQSOption(field_id, option, section_id);
-        else if(type=='mcqm')addMCQMOption(field_id, option, section_id);
-        else throw "Error: Select MCQ type field to add option";
-        event.preventDefault();
+    $(document).ready(function(){
 
-
-    });
-
-    //function called when 'add_option_form' is submitted
-    $('#add_option_form').submit(function(event){
-        let title =$("#title_of_field").val();
-        // let selected = $( "#type_of_field option:selected" ).val();
-        let required = $("#required_field").is(":checked");
-        //title and required are common attributes for all the field types
-        let option =$("#option_text").val();
-       
-        if(prev_field_added=='mcqs')addMCQSOption(title, option, required);
-        else if(prev_field_added=='mcqm')addMCQMOption(title, option, required);
-        else throw "Error: Select MCQ type field to add option";
-        event.preventDefault();
-    });
-
-    //functions dealing with POSTing the data to the server
-    $('#log_btn').click(function(){
-        let json = JSON.stringify(fb);
-        console.log(json);
-
-
-        $.ajax({
-            beforeSend: function(request) {
-                let csrftoken = Cookies.get('csrftoken');
-                // console.log(csrftoken);
-                request.setRequestHeader('X-CSRFToken', csrftoken);
-            },
-            type: "POST",
-            url: "/forms/fb_create/",
-            // datatype:'json',
-            // contentType: 'application/json; charset=utf-8',
-            data: {
-                'fb': json, 
-            },
-
-            success: function () {
-                //var delay=500;
-
-                alert('Form Blueprint Saved Successfully, Click okay to be redirected to dashboard...');
-                // setTimeout(function(){
-                // }, delay);
-                location.href = "/forms/dashboard";
-            }
+        console.log("Hello");
+        $("#section_node").select2({
 
         });
+        //the section the user is adding fields to right now
+        let curr_section = 0;
 
+        //the number of options currently added in the MCQS/MCQM types of questions
+        let curr_options_num=0;
+
+        //previous field type added
+        let prev_field_added ='';
+        $("#add_option_button").prop("disabled", true);
+
+        //create the form object
+        let fb = new FormBlueprint(fb_id);
+
+        //utility function to convert ID to selector
+        function removeWhitespace(text){
+            return text.replace(/ /g,'');
+        }
+
+        function getSelectorByID(id){
+            return "#"+id;
+        }
+        //using the section_<curr_section> to name the sections of the form
+        function getCurrSectionID(sid){
+            return "section_"+String(curr_section);
+        }
+
+        //function for adding a section in the form
+        function addSection(){
+            var temp=$("#section_node")
+            var section_name = $("#section_name").val()
+            temp=temp.val()
+            temp= JSON5.parse(temp)
+            curr_section+=1;
+            new_html = "<div class='card'><div class='card-header bg-transparent'><h4>"+section_name+"</h4>"+"<h6 class='text-secondary'><i>Associated Node:"+temp['sno']+"</i></h6></div><div class='card-body'><section id='section_"+String(curr_section)+"'></section>";
+
+            add_field_form = $("#add_field_form").clone();
+            add_field_form.find('div[name="add_field_template"]').attr("id", "add_field_form_" + String(curr_section));
+            new_html += add_field_form.html();
+            new_html += "</div></div><br>";
+            $("#dynamic-form").append(new_html);
+
+            //add the section in the form object as well
+            let section = new Section('section_'+String(curr_section),temp['role'],temp['team'], temp['node_id'], section_name);
+            fb.addSection(section);
+        }
+
+        //function for adding a string field to the dynamic form
+        function addStrngField(title, required, section_id){
+            section_selector = getSelectorByID(section_id);
+            var index = parseInt(section_id.replace('section_', ''));
+            let field_id = section_id+"_"+removeWhitespace(title)+'_strng';
+            let header_html = "<div class='form-group>"
+            let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
+            let input_html="";
+            if (required==true)
+                input_html = "<input class='form-control' type='text' id='"+field_id+"' required='required'><br>";
+            else
+                input_html = "<input class='form-control' type='text' id='"+field_id+"'><br>";
+            let tail_html = "</div>"
+
+            $(section_selector).append(header_html+label_html+input_html+tail_html);
+
+            //create the field object for JS object
+            let field = new Field(field_id, 'strng', title, required);
+            //add this field to the section
+            fb.sections[index-1].addField(field);
+        }
+        //this function is called when the user adds an integer field to the form
+        function addIntgrField(title, required, section_id){
+            section_selector = getSelectorByID(section_id);
+            var index = parseInt(section_id.replace('section_', ''));
+            let field_id = section_id+"_"+removeWhitespace(title)+'_intgr';
+            let header_html = "<div class='form-group>"
+            let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
+            let input_html="";
+            if (required==true)
+                input_html = "<input class='form-control' type='number' id='"+field_id+"' required='required'><br>";
+            else
+                input_html = "<input class='form-control' type='number' id='"+field_id+"'><br>";
+            let tail_html = "</div>"
+
+            $(section_selector).append(header_html+label_html+input_html+tail_html);
+            //create the field object for JS object
+            let field = new Field(field_id, 'intgr', title, required);
+            //add this field to the section
+            fb.sections[index-1].addField(field);
+        }
+        //this function is called when the user adds a file field
+        function addFLField(title, required, section_id){
+            section_selector = getSelectorByID(section_id);
+            var index = parseInt(section_id.replace('section_', ''));
+            let field_id = section_id+"_"+removeWhitespace(title)+'_fl';
+            let header_html = "<div class='form-group>"
+            let label_html = "<label for='"+field_id+"'>"+title+":  </label>";
+            let input_html="";
+            if (required==true)
+                input_html = "<input class='form-control-file' type='file' id='"+field_id+"' required='required'><br>";
+            else
+                input_html = "<input class='form-control-file' type='file' id='"+field_id+"'><br>";
+            let tail_html = "</div>"
+
+            $(section_selector).append(header_html+label_html+input_html+tail_html);
+            //create the field object for JS object
+            let field = new Field(field_id, 'fl', title, required);
+            //add this field to the section
+            fb.sections[index-1].addField(field);
+        }
+        //this function is called when the user adds a mcqs field to the form
+        function addMCQSField(title, required, section_id){
+            section_selector = getSelectorByID(section_id);
+            var index = parseInt(section_id.replace('section_', ''));
+
+            // Increase number of option questions
+            var question_id = fb.sections[index-1].option_qs;
+            fb.sections[index-1].option_qs += 1;
+
+            let field_id = section_id+"_"+removeWhitespace(title)+'_mcqs';
+            //means add p element as a question
+            let new_html = "<div id='"+field_id+"'><p>"+title+":</p> <div class = 'col-md-12'>";
+
+            add_option_form = $("#add_option_form").clone();
+            add_option_form.find('div[name="add_option_template"]').attr("id", "add_option_form_" + String(index) + "-" + String(question_id) + "-mcqs");
+            new_html += add_option_form.html();
+
+            new_html += "</div></div> <br>";
+
+            $(section_selector).append(new_html);
+
+            //create the field object for JS object
+            let field = new Field(field_id, 'mcqs', title, required);
+            //add this field to the section
+            fb.sections[index-1].addField(field);
+        }
+        //this function is called when an option is to be added to the mcqs field
+        function addMCQSOption(field_id, option, section_id){
+            //this function is called when an option is added to a mcqs field
+            //get the id of the div containing the question
+            var index = section_id;
+            let option_name = field_id+"o";
+
+            //now append the options to the MCQS div
+            //radio buttons must have the same name value for grouping
+            let option_html = "";
+            let header_html = "<div class='form-check'>";
+
+            option_html="<label class='form-check-label'><input type='radio' name='"+option_name+"' value='"+option+"' >"+option+"</label><br>";
+
+            let tail_html ="</div>";
+            $(getSelectorByID(field_id)).append(header_html+option_html+tail_html);
+
+            let _option = new Option(option_name, option);
+            //add the option
+            fb.sections[index-1].fields[fb.sections[index-1].fields.length-1].addOption(_option);
+        }
+
+        //this function is called when the user adds a mcqm field to the form
+        function addMCQMField(title, required, section_id){
+            section_selector = getSelectorByID(section_id);
+            var index = parseInt(section_id.replace('section_', ''));
+
+            var question_id = fb.sections[index-1].option_qs;
+            fb.sections[index-1].option_qs += 1;
+
+            let field_id = section_id+"_"+removeWhitespace(title)+'_mcqm';
+            //means add p element as a question
+            let new_html = "<div id='"+field_id+"'><p>"+title+":</p> <div class = 'col-md-12'>";
+
+            add_option_form = $("#add_option_form").clone();
+            add_option_form.find('div[name="add_option_template"]').attr("id", "add_option_form_" + String(index) + "-" + String(question_id)  + "-mcqm" );
+            new_html += add_option_form.html();
+
+            new_html += "</div></div> <br>";
+
+            $(section_selector).append(new_html);
+
+            //create the field object for JS object
+            let field = new Field(field_id, 'mcqm', title, required);
+            //add this field to the section
+            fb.sections[index-1].addField(field);
+        }
+
+        //this function is called when an option is to be added to the mcqs field
+        function addMCQMOption(field_id, option, section_id){
+            //this function is called when an option is added to a mcqm field
+            //get the id of the div containing the question
+            var index = section_id;
+
+            let option_name = field_id+"o";
+            //now append the options to the MCQS div
+            //radio buttons must have the same name value for grouping
+            let header_html = "<div class='form-check'>";
+            let option_html = "";
+
+            option_html="<label class='form-check-label'><input type='checkbox' name='"+option_name+"' value='"+option+"' >"+option+"</label><br>";
+
+            let tail_html ="</div>";
+
+            $(getSelectorByID(field_id)).append(header_html+option_html+tail_html);
+            //add the option
+            let _option = new Option(option_name, option);
+            fb.sections[index-1].fields[fb.sections[index-1].fields.length-1].addOption(_option);
+        }
+
+        $("#add_section").click(function(){
+            addSection();
+        });
+
+        $(document).on('click', "input[name='Add Field']", function(event){
+            // NEW FUNCTION
+            var main_div = $(this).parent().parent().parent();
+            var section_id = "section_" + main_div.attr('id').replace('add_field_form_', '');
+
+            let selected = main_div.find('select[name="type_of_field"').val();
+            let title = main_div.find("input[name='title_of_field'").val();
+            let required = main_div.find("input[name='required_field'").is(":checked");
+
+
+            prev_field_added = selected;
+
+            //if field type is string...
+            if (selected==="strng"){
+                //inject code in the dynamic-form for this field
+                addStrngField(title, required, section_id);
+            }
+            //if field type is int...
+            else if(selected=='intgr'){
+                addIntgrField(title, required, section_id);
+            }
+            //if field type is mcqs....
+            else if(selected=='mcqs'){
+
+                addMCQSField(title, required, section_id);
+            }
+            //if field type is mcqm...
+            else if(selected=='mcqm'){
+
+                addMCQMField(title, required, section_id);
+
+            }
+            //if field type is file upload...
+            else if(selected=='fl'){
+                addFLField(title, required, section_id);
+                $("#add_option_button").prop("disabled", true);
+
+            }
+            else{
+                event.preventDefault();
+                throw "Error: Invalid Field Type";
+            }
+        });
+
+
+
+        $(document).on('click', "input[name='Add Option']", function(event){
+            var main_div = $(this).parent().parent().parent();
+
+            var section_question_split = main_div.attr('id').replace('add_option_form_', '').split("-");
+            var section_id = section_question_split[0];
+            var question_id = section_question_split[1];
+            var type = section_question_split[2];
+
+            var field_id = main_div.parent().parent().attr('id');
+
+            let option = main_div.find("input[name='option_text'").val();
+
+            console.log(option, type, )
+            if(type=='mcqs')addMCQSOption(field_id, option, section_id);
+            else if(type=='mcqm')addMCQMOption(field_id, option, section_id);
+            else throw "Error: Select MCQ type field to add option";
+            event.preventDefault();
+        });
+
+        //function called when 'add_option_form' is submitted
+        $('#add_option_form').submit(function(event){
+            let title =$("#title_of_field").val();
+            // let selected = $( "#type_of_field option:selected" ).val();
+            let required = $("#required_field").is(":checked");
+            //title and required are common attributes for all the field types
+            let option =$("#option_text").val();
+
+            if(prev_field_added=='mcqs')addMCQSOption(title, option, required);
+            else if(prev_field_added=='mcqm')addMCQMOption(title, option, required);
+            else throw "Error: Select MCQ type field to add option";
+            event.preventDefault();
+        });
+
+        //functions dealing with POSTing the data to the server
+        $('#log_btn').click(function(){
+            let json = JSON.stringify(fb);
+            console.log(json);
+
+            $.ajax({
+                beforeSend: function(request) {
+                    let csrftoken = Cookies.get('csrftoken');
+                    // console.log(csrftoken);
+                    request.setRequestHeader('X-CSRFToken', csrftoken);
+                },
+                type: "POST",
+                url: "/forms/fb_create/",
+                // datatype:'json',
+                // contentType: 'application/json; charset=utf-8',
+                data: {
+                    'fb': json,
+                },
+
+                success: function () {
+                    //var delay=500;
+
+                    alert('Form Blueprint Saved Successfully, Click okay to be redirected to dashboard...');
+                    // setTimeout(function(){
+                    // }, delay);
+                    location.href = "/forms/dashboard";
+                }
+            });
+        });
     });
-
-});
-
-
-    </script>
+</script>
 {%endblock%}
 {% block content %}
 {% comment %} row containing the jumbotron heading {% endcomment %}
@@ -469,7 +455,7 @@ $(document).ready(function(){
     </div>
     <div class='col-md-1'></div>
     <div class='col-md-3'>
-        
+
     </div>
     <div class='col-md-1'></div>
 </div>
@@ -523,7 +509,7 @@ $(document).ready(function(){
     </div>
 </div>
 <div style="display: none" id="add_option_form">
-    
+
     {% comment %} Here add the div for mcqs, mcqm and fl type fields{% endcomment %}
             <div name='add_option_template'>
                 <div class='form-group form-row'>
@@ -537,7 +523,7 @@ $(document).ready(function(){
                     </div>
 
                 </div>
-                
+
             </div>
         {% comment %} the optional div ends here {% endcomment %}
 </div>

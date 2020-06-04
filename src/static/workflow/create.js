@@ -59,6 +59,8 @@ $(document).ready(function() {
 
         });
         //console.log(new_node);
+        populate_dropdown(node_count, 'role');
+        populate_dropdown(node_count, 'team');
 
     });
 
@@ -75,13 +77,19 @@ $(document).ready(function() {
       }
     });
 
+    populate_dropdown(1, 'role');
+    populate_dropdown(1, 'team');
+
+
     $("[id=node_list]").on('change', "[id^=node_][id$=_role]",function() {
         var node_id = $(this)[0].id;
         var role_name = $(this).val().replace(/ /g, "-");
         var url = "http://127.0.0.1:8000/forms/api/teams_have_role/" + role_name + "/teams/";
         var teams = [];
         var node_select_id = node_id.replace("role", "team");
-        var options = '';
+        var options = '<option value="None">None</option>';
+
+        var selected_team = $("select#{0}".format(node_select_id)).val();
 
         $.ajax({url: url, success: function(result){
             $.each(result, function (index, value) {
@@ -91,6 +99,7 @@ $(document).ready(function() {
                 options += '<option value="' + teams[i] + '">' + teams[i] + '</option>';
             }
             $("select#{0}".format(node_select_id)).html(options);
+            $("select#{0}".format(node_select_id)).val(selected_team);
         }});
     });
 
@@ -100,7 +109,9 @@ $(document).ready(function() {
         var url = "http://127.0.0.1:8000/forms/api/roles_in_team/" + team_name + "/roles/";
         var roles = [];
         var node_select_id = node_id.replace("team", "role");
-        var options = '';
+        var options = '<option value="None">None</option>';
+
+        var selected_role = $("select#{0}".format(node_select_id)).val();
 
         $.ajax({url: url, success: function(result){
             $.each(result, function (index, value) {
@@ -110,7 +121,32 @@ $(document).ready(function() {
                 options += '<option value="' + roles[i] + '">' + roles[i] + '</option>';
             }
             $("select#{0}".format(node_select_id)).html(options)
+            $("select#{0}".format(node_select_id)).val(selected_role);
         }});
     });
-
 });
+
+function populate_dropdown(node_id, list_name) {
+    let dropdown = $('select#node_{0}_{1}'.format(node_id,list_name));
+    dropdown.empty();
+    dropdown.append('<option selected="true" disabled>Choose {0}</option>'.format(list_name));
+    dropdown.prop('selectedIndex', 0);
+
+    const role_api_url = 'http://127.0.0.1:8000/forms/api/roles_in_team/None/roles/';
+    const team_api_url = 'http://127.0.0.1:8000/forms/api/teams_have_role/None/teams/';
+
+    if(list_name === 'role'){
+        $.ajax({url: role_api_url, success: function(result){
+            $.each(result, function (index, value) {
+                dropdown.append($('<option></option>').attr('value', value.role).text(value.role));
+            });
+        }});
+    }
+    else{
+        $.ajax({url: team_api_url, success: function(result){
+            $.each(result, function (index, value) {
+                dropdown.append($('<option></option>').attr('value', value.team).text(value.team));
+            });
+        }});
+    }
+}

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .models import FormInstance
 from .routing import get_workflow_user_list
 from teams.models import TeamHasEmployees, Team
+from employees.models import Role
 
 class ListWorkflowUsers(APIView):
     """
@@ -40,12 +41,19 @@ class ListTeamsHavingRole(APIView):
         Return a list of all teams.
         """
         role_name = role_name.replace("-"," ")
-        teams = TeamHasEmployees.objects.filter(role__role_name = role_name)
+        if(role_name == "None"):
+            teams = Team.objects.all()
+            queryset = [{
+                'id': team.id,
+                'team': team.team_name
+            } for team in teams]
 
-        queryset = [{
-            'id': team.team.id,
-            'team': team.team.team_name
-        } for team in teams]
+        else:
+            teams = TeamHasEmployees.objects.filter(role__role_name = role_name)
+            queryset = [{
+                'id': team.team.id,
+                'team': team.team.team_name
+            } for team in teams]
 
         return Response(queryset)
 
@@ -63,11 +71,11 @@ class ListRolesInTeam(APIView):
         """
         team_name = team_name.replace("-"," ")
         if(team_name == "None"):
-            teams = Team.objects.all()
+            roles = Role.objects.all()
             queryset = [{
                 'id': role.id,
-                'role': role.team_name
-            } for role in teams]
+                'role': role.role_name
+            } for role in roles]
 
         else:
             teams = TeamHasEmployees.objects.filter(team__team_name = team_name)

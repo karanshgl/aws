@@ -91,14 +91,4 @@ def create_workflow(request):
 			}
 			return render(request, 'forms/redirect_to_dashboard.html', context = context)
 
-	#making a list of roles and teams for rendering in searchable dropdown
-	role_list=list(Role.objects.all())
-	team_list=list(Team.objects.all())
-
-	context={
-		"role_list":role_list,
-		"team_list":team_list
-	}
-
-
-	return render(request, 'workflow/create.html',context)
+	return render(request, 'workflow/create.html',{})

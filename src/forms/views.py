@@ -249,9 +249,10 @@ def fi_respond(request, fi_id):
     if request.method=='POST':
         data = request.POST.copy()#make a copy of the query dict returned which is immutable
         try:
-            
+            data['user']=str(request.user)
             print(data)
             del data['csrfmiddlewaretoken']
+            
             with transaction.atomic():
                 fi_object.add_response(data)
                 if is_user_last_node:

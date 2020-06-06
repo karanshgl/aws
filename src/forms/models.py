@@ -128,6 +128,7 @@ class FormInstance(models.Model):
     current_node = models.ForeignKey(Node, on_delete = models.CASCADE, null = False)
     sender = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False)
     active = models.BooleanField(default=True)
+    accepted = models.BooleanField(default=False) # Check this only when active is False. If active is false, this will reflect accept/reject state. 
     creation_time = models.DateTimeField(auto_now=True, auto_now_add=False, editable=False)
 
     def fetch_document(self):

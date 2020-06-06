@@ -20,8 +20,15 @@
                 {{ section_html | safe }}
                 {% comment %} <input type='hidden' name='section_id' value={{ section_id }}>
                 <input type='hidden' name='node_id' value={{ node_id }}> {% endcomment %}
+                {% if is_user_last_node %}
+                <div class='form-actions'><input class='btn btn-primary' type='submit' name='action'  value='Submit and Accept'></div>
+                <br>
+                <div class='form-actions'><input class='btn btn-primary' type='submit' name='action' value='Submit and Reject'></div>
+                {% else %}
+                <div class='form-actions'><input class='btn btn-primary' type='submit' name='action' value='Submit and Forward'></div>
 
-                <div class='form-actions'><input class='btn btn-primary' type='submit' value='Submit'></div>
+                {% endif %}
+
             </form>
         </div>
         <div class='col-md-1'></div>

@@ -242,6 +242,9 @@ def fi_respond(request, fi_id):
     if not fi_object.is_user_current_node(sender): return HttpResponse("403: Forbidden")
     #get the section corressponding to the current node of the workflow from the section_id attribute of the node model
     curr_section_id = fi_object.current_node.section_id#curr_section_id is 1-indexed
+    is_user_last_node=False
+    if not fi_object.current_node.next_node:
+        is_user_last_node=True
     section_html, node_id = fb_object.fetch_section_html(curr_section_id)
     if request.method=='POST':
         data = request.POST.copy()#make a copy of the query dict returned which is immutable
@@ -251,8 +254,16 @@ def fi_respond(request, fi_id):
             del data['csrfmiddlewaretoken']
             with transaction.atomic():
                 fi_object.add_response(data)
-                fi_object.send_forward(sender)
-                fi_object.save()
+                if is_user_last_node:
+                    fi_object.active=False
+                    if data.get('action')=='Submit and Accept':
+                        fi_object.accepted=True
+                    else:
+                        fi_object.accepted=False
+                    fi_object.save()
+                else:
+                    fi_object.send_forward(sender)
+                    fi_object.save()
             context={
                     'message': "Response Succesful"
                 }
@@ -266,6 +277,7 @@ def fi_respond(request, fi_id):
     else:
         context = {
             'section_html': section_html,
+            'is_user_last_node': is_user_last_node,
         }
         return render(request, 'forms/fi_respond.html', context=context)
 

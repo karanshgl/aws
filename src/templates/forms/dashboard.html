@@ -55,7 +55,7 @@
             <tr>
                 <td class='styled-table'>{{ fi.id }}</td>
                 <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
-                <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
+                <td class='styled-table'>Awaiting your action</td>               
                 <td class='styled-table'>
                     <a href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
                 </td>
@@ -102,7 +102,13 @@
                     <tr>
                         <td  class='styled-table'>{{ fi.id  }}</td>
                         <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
+                        {% if fi.active%}
                         <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
+                        {% elif fi.accepted %}
+                        <td class='styled-table'>Accepted</td>
+                        {% else %}
+                        <td class='styled-table'>Rejected</td>  
+                        {% endif %}   
                         <td class='styled-table'>
                             <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
                         </td >

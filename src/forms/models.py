@@ -128,7 +128,6 @@ class FormInstance(models.Model):
     current_node = models.ForeignKey(Node, on_delete = models.CASCADE, null = False)
     sender = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False)
     active = models.BooleanField(default=True)
-    accepted = models.BooleanField(default=False) # Check this only when active is False. If active is false, this will reflect accept/reject state. 
     creation_time = models.DateTimeField(auto_now=True, auto_now_add=False, editable=False)
 
     def fetch_document(self):
@@ -145,7 +144,7 @@ class FormInstance(models.Model):
         responses = {'responses':[]}
         responses['id'] = self.id
         data['date_time'] = self.creation_time
-        data['user'] = str(self.sender)
+        data['user'] = self.sender.user.email
         data['node_id'] = self.current_node.id
         # data['section_id'] = self.current_node.sec
         responses['responses'].append(data)
@@ -158,6 +157,7 @@ class FormInstance(models.Model):
     def add_response(self, data):
         #add meta information to the data
         data['date_time'] = datetime.datetime.now()
+        data['user'] = self.sender.user.email
         data['node_id'] = self.current_node.id
         data = qdict_to_dict(data)# convert q_dict to dict
         #get the doc from mongo
@@ -203,10 +203,20 @@ class FormInstance(models.Model):
         # FINAL NODE
         self.active = False
         return False
+
     """send this instance to the prev node"""
     def send_backward(self):
         if self.current_node.prev_node:
             self.current_node = self.current_node.prev_node
+            return True
+        return False
+
+    """send this instance to the node for which comment is posted"""
+    def send_backward_for_comment(self, node):
+        if self.current_node.prev_node:
+            while self.current_node is node.next_node:
+
+                self.current_node = self.current_node.prev_node
             return True
         return False
 
@@ -257,13 +267,13 @@ class FormNotification(models.Model):
 
 
     def __str__(self):
-        return '{} : {}'.format(self.user, self.form_instance)
+        return '{} : {} : {}'.format(self.user, self.form_instance, self.status)
 
 
 class FormInstanceHasComment(models.Model):
     # Manages comments of a form intance
 
-    form_instance = models.ForeignKey(FormInstance, on_delete = models.CASCADE, null = False, blank = False) 
+    form_instance = models.ForeignKey(FormInstance, on_delete = models.CASCADE, null = False, blank = False)
     sender = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False, blank = False, related_name = 'sender')
     receiver = models.ForeignKey(Profile, on_delete = models.CASCADE, null = False, blank = False, related_name = 'receiver')
     comment = models.TextField()
@@ -272,4 +282,3 @@ class FormInstanceHasComment(models.Model):
 
     def __str__(self):
         return '{}: {} to {}'.format(form_instance, sender, receiver)
-

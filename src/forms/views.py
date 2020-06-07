@@ -13,7 +13,7 @@ from employees.models import Profile
 from workflows.models import Workflow, Node
 from teams.models import TeamHasEmployees
 from django.http import JsonResponse
-
+from .routing import get_node_user
 
 from django.db import transaction
 
@@ -60,19 +60,42 @@ def dashboard(request):
 @login_required
 def send_comment(request):
     user_profile = request.user.profile
-    the_instance = user_profile.teamhasemployees
+    the_sender = user_profile.teamhasemployees
 
     try:
-
         if request.method == 'POST':
             fi = int(request.POST.get('fi_id'))
             form_instance = FormInstance.objects.get(pk = fi)
             receiver_id = int(request.POST.get('receiver'))
             receiver = Profile.objects.get(pk = receiver_id)
+            the_receiver = TeamHasEmployees.objects.get(employee__id = receiver_id)
+
             comment = request.POST.get('comment')
+        
+            fn_sender = FormNotification.objects.get(user = the_sender, form_instance = form_instance)
+            print(fn_sender)
+            fn_sender.status = 'B'
+            fn_sender.save()
+
+            fn_receiver = FormNotification.objects.get(user = the_receiver, form_instance = form_instance)
+            print(fn_receiver)
+            fn_receiver.status = 'N'
+            fn_receiver.save()
+
+            form_blueprint = form_instance.blueprint
+            workflow = form_blueprint.workflow
+
+            curr_node = Node.objects.get(workflow = workflow, prev_node = None)
+
+            while (get_node_user(curr_node, form_instance.sender) != receiver) & (curr_node.next_node != None):
+                curr_node = curr_node.next_node
+
+            form_instance.current_node = curr_node
+            form_instance.save()
 
             comment_instance = FormInstanceHasComment(form_instance = form_instance, sender = user_profile, receiver = receiver)
             comment_instance.save()
+
             return HttpResponse("Successful")
     except:
         return HttpResponse("Failed")
@@ -175,9 +198,9 @@ def fb_available_to_instantiate(request):
         print("in fb_available_to_instantiate: "+str(e))
         return render(request, 'message.html', {'message': "You haven't been assigned a team yet"})
         #fetch form blueprints whose starting node has the role of the user. Only those form blueprints can be used to instantiate a form.
-    
+
     try:
-        head_nodes= Node.objects.filter(associated_role=user_role, prev_node = None) 
+        head_nodes= Node.objects.filter(associated_role=user_role, prev_node = None)
         forms = [node.get_blueprint() for node in head_nodes if node.get_blueprint().active==True]
         context ={
             'form_blueprints':forms
@@ -206,7 +229,7 @@ def fi_create(request, fb_id):
             sender = request.user.profile
             with transaction.atomic():
                 fi_object = FormInstance.objects.create(blueprint=fb_object, current_node=node_object, sender=request.user.profile)
-                
+
                 data = request.POST.dict()
                 del data['csrfmiddlewaretoken']
                 # data['section_id'] = section_id
@@ -252,7 +275,7 @@ def fi_respond(request, fi_id):
             data['user']=str(request.user)
             print(data)
             del data['csrfmiddlewaretoken']
-            
+
             with transaction.atomic():
                 fi_object.add_response(data)
                 if is_user_last_node:
@@ -289,7 +312,7 @@ def fi_detail(request, fi_id):
     fb_object = fi_object.blueprint
 
     if not fi_object.is_user_in_workflow(sender): return HttpResponse("403: Forbidden")
-    
+
     fi_responses = fi_object.fetch_responses()
     context = {
         'fi_object': fi_object,

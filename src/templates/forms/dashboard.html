@@ -19,7 +19,7 @@
         $.get(url, function(data, status){
             console.log(data);
             $.each(data, function (index, value) {
-                dropdown.append($('<option></option>').attr('value', value.username).text(value.username));
+                dropdown.append($('<option></option>').attr('value', value.id).text(value.username));
             });
         });
 
@@ -55,7 +55,7 @@
             <tr>
                 <td class='styled-table'>{{ fi.id }}</td>
                 <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
-                <td class='styled-table'>Awaiting your action</td>               
+                <td class='styled-table'>Awaiting your action</td>
                 <td class='styled-table'>
                     <a href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
                 </td>
@@ -107,8 +107,8 @@
                         {% elif fi.accepted %}
                         <td class='styled-table'>Accepted</td>
                         {% else %}
-                        <td class='styled-table'>Rejected</td>  
-                        {% endif %}   
+                        <td class='styled-table'>Rejected</td>
+                        {% endif %}
                         <td class='styled-table'>
                             <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
                         </td >
@@ -144,19 +144,19 @@
             </div>
             <form id = "comment-form" method="POST" action="{% url 'send_comment' %}">
                 {% csrf_token %}
-            <div class="modal-body">
-                <input type="hidden" name="fi_id" id = "fi_id" value="">
-                <label for receiver>Send comment to</label>
-                <!-- <input class="form-control" type="text" name="receiver" id = "receiver" placeholder="Select the user"> -->
-                <select class="form-control" type="text" name="receiver" id="receiver"></select>
-                <br>
-                <label for="comment">Enter comment</label>
-                <textarea class="form-control" id="comment" name = "comment" rows="3" placeholder="enter the comment"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Send Comment</button>
-            </div>
+                <div class="modal-body">
+                    <input type="hidden" name="fi_id" id = "fi_id" value="">
+                    <label for receiver>Send comment to</label>
+                    <!-- <input class="form-control" type="text" name="receiver" id = "receiver" placeholder="Select the user"> -->
+                    <select class="form-control" type="text" name="receiver" id="receiver"></select>
+                    <br>
+                    <label for="comment">Enter comment</label>
+                    <textarea class="form-control" id="comment" name = "comment" rows="3" placeholder="enter the comment"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Send Comment</button>
+                </div>
             </form>
         </div>
     </div>

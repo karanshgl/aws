@@ -5,4 +5,5 @@ venv
 # settings.py
 .vscode
 logs
-migrations
+*/migrations/*
+!*/migrations/__init__.py

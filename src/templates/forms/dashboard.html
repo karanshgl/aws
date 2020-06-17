@@ -99,31 +99,31 @@
                     <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
                 </tr>
                 {% for fi in rest_form_instances %}
-                    <tr>
-                        <td  class='styled-table'>{{ fi.id  }}</td>
-                        <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
-                        {% if fi.active%}
-                        <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
-                        {% elif fi.accepted %}
-                        <td class='styled-table'>Accepted</td>
-                        {% else %}
-                        <td class='styled-table'>Rejected</td>
-                        {% endif %}
-                        <td class='styled-table'>
-                            <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
-                        </td >
-                        <td class='styled-table'>{{fi.active}}</td>
-                        <td class='styled-table'>
-                            {% if fi in pending_with_me_form_instances%}
-                                <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                        <tr>
+                            <td  class='styled-table'>{{ fi.id  }}</td>
+                            <td class='styled-table'>{{ fi.blueprint.workflow.title }}</td>
+                            {% if fi.active%}
+                            <td class='styled-table'>Pending with {{ fi.current_node.associated_role }}, {{ fi.current_node.associated_team }}</td>
+                            {% elif fi.accepted %}
+                            <td class='styled-table'>Accepted</td>
                             {% else %}
-                                <a>Not pending with you</a>
+                            <td class='styled-table'>Rejected</td>
                             {% endif %}
-                        </td>
-                        <td class='styled-table'>
-                            <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
-                        </td>
-                    </tr>
+                            <td class='styled-table'>
+                                <a  href="{% url 'fi_detail' fi_id=fi.id %}">Detail</a>
+                            </td >
+                            <td class='styled-table'>{{fi.active}}</td>
+                            <td class='styled-table'>
+                                <!-- {% if fi in pending_with_me_form_instances%}
+                                    <a  href="{% url 'fi_respond' fi_id=fi.id %}">Respond</a>
+                                {% else %} -->
+                                    <a>Not pending with you</a>
+                                <!-- {% endif %} -->
+                            </td>
+                            <td class='styled-table'>
+                                <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
+                            </td>
+                        </tr>
                 {% endfor %}
             </table>
         {% endif %}

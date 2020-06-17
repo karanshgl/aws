@@ -281,4 +281,4 @@ class FormInstanceHasComment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, null = False, blank = False)
 
     def __str__(self):
-        return '{}: {} to {}'.format(form_instance, sender, receiver)
+        return '{}: {} to {}'.format(self.form_instance, self.sender, self.receiver)

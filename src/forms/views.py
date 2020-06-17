@@ -6,6 +6,7 @@ import pymongo
 from pymongo import MongoClient
 from django.conf import settings
 import datetime
+import pytz
 
 from .forms import FormBlueprintForm
 from .models import FormBlueprint, FormInstance, FormNotification, FormInstanceHasComment
@@ -32,6 +33,8 @@ def dashboard(request):
 
 
         forms_no_action = [(n.form_instance, n.form_instance.is_user_current_node(user_profile)) for n in notifications]
+        fi_no_action = [i[0] for i in forms_no_action] 
+        rest_form_instances=[fi for fi in FormInstance.objects.all() if fi not in fi_no_action]
         # final_list=[]
         # for form, cn in forms_no_action:
         #     for notification in notifications:
@@ -50,7 +53,7 @@ def dashboard(request):
         #could further divide into active and inactive
         context = {
             'pending_with_me_form_instances': forms_no_action,
-            'rest_form_instances': FormInstance.objects.all(),
+            'rest_form_instances': rest_form_instances,
         }
         return render(request, 'forms/dashboard.html', context=context)
     except Exception as e:
@@ -93,13 +96,19 @@ def send_comment(request):
             form_instance.current_node = curr_node
             form_instance.save()
 
-            comment_instance = FormInstanceHasComment(form_instance = form_instance, sender = user_profile, receiver = receiver)
+            comment_instance = FormInstanceHasComment(form_instance = form_instance, sender = user_profile, receiver = receiver , comment = comment)
             comment_instance.save()
-
-            return HttpResponse("Successful")
-    except:
-        return HttpResponse("Failed")
-
+            context={
+                            'message': "Successful"
+                        }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
+            
+    except Exception as e:
+        print(e)
+        context={
+                            'message': "Failed"
+                        }
+        return render(request, 'forms/redirect_to_dashboard.html', context = context)
 
 @login_required
 def fb_all(request):
@@ -314,9 +323,26 @@ def fi_detail(request, fi_id):
     if not fi_object.is_user_in_workflow(sender): return HttpResponse("403: Forbidden")
 
     fi_responses = fi_object.fetch_responses()
+    fi_comments = FormInstanceHasComment.objects.filter(form_instance=fi_object)
+    fi_comments_responses=[]
+    # making a combined list of comments and responses
+    # a list of tuples (timestmap, identifier, object) , identifier tells whether the object is comment or response, used while rendering
+    
+    for each in fi_responses:
+        aware_date_time=pytz.utc.localize(each['date_time'])
+        fi_comments_responses.append((aware_date_time,1,each))
+
+    for each in fi_comments:
+        fi_comments_responses.append((each.timestamp,0,each))
+    # sort on basis of timestamp
+    fi_comments_responses.sort(key=lambda x:x[0])
+    for i in fi_comments_responses:
+        print(i)
     context = {
         'fi_object': fi_object,
-        'fi_responses': fi_responses,
+        'fi_responses': fi_comments_responses,
+        # 'fi_responses': fi_responses,
+        # 'fi_comments': fi_comments
     }
     return render(request, 'forms/fi_detail.html', context = context)
 

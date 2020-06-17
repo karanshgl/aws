@@ -16,39 +16,77 @@
         <div class='col-md-1'></div>
         <div class='col-md-10'>
             {% for response in fi_responses %}
-                {% comment %} fi_response is an array{% endcomment %}
-                {% comment %} make a card for each response {% endcomment %}
-                <br>
-                <div class='card'>
-                    <div class='card-header'>
-                        <h5>#{{ forloop.counter }}</h5>
-                    </div>
-                    <div class='card-body'>
-                        <small><p class="card-subtitle mb-2 text-muted">{{response.user}} at {{response.date_time|date:"h:i A"}} on {{response.date_time|date:"l, d F Y"}}</p></small>
-                        {% for key, val in response.items %}
-                            {% comment %} then show the key value pairs here  {% endcomment %}
-                            {% if key == 'node_id' or key == 'date_time' or key == 'user' %}
-                                {% comment %} do nothing {% endcomment %}
-                            {%else%}
-                                {% if val|is_list %}
-                                    <p><strong>{{key}}: </strong>
-                                        {% for v in val %}
-                                            {% if forloop.last %}
-                                                {{v}}
-                                            {% else %}
-                                                {{v}}, 
-                                            {% endif %}
-                                        {% endfor %}
-                                    </p>
-                                {% else %}
-                                    <p> <strong>{{key}}</strong>: {{val}}</p>
+                {% if response.1 == 1 %}
+                    {% comment %} fi_response is an array{% endcomment %}
+                    {% comment %} make a card for each response {% endcomment %}
+                    <br>
+                    <div class='card'>
+                        <div class='card-header'>
+                            <h5>#{{ forloop.counter }}</h5>
+                        </div>
+                        <div class='card-body'>
+                            <small><p class="card-subtitle mb-2 text-muted">{{response.2.user}} at {{response.2.date_time|date:"h:i A"}} on {{response.2.date_time|date:"l, d F Y"}}</p></small>
+                            {% for key, val in response.2.items %}
+                                {% comment %} then show the key value pairs here  {% endcomment %}
+                                {% if key == 'node_id' or key == 'date_time' or key == 'user' %}
+                                    {% comment %} do nothing {% endcomment %}
+                                {%else%}
+                                    {% if val|is_list %}
+                                        <p><strong>{{key}}: </strong>
+                                            {% for v in val %}
+                                                {% if forloop.last %}
+                                                    {{v}}
+                                                {% else %}
+                                                    {{v}}, 
+                                                {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                    {% else %}
+                                        <p> <strong>{{key}}</strong>: {{val}}</p>
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        <!-- <a href="#" class='card-link'>Dummy</a> -->
+                            {% endfor %}
+                            <!-- <a href="#" class='card-link'>Dummy</a> -->
+                        </div>
                     </div>
-                </div>
-                <br>
+                    <br>
+                {% else %}  {% comment %} this element of array is a comment{% endcomment %}
+                    {% comment %} fi_response is an array{% endcomment %}
+                    {% comment %} make a card for each response {% endcomment %}
+                    <br>
+                    <div class='card'>
+                        <div class='card-header'>
+                            <h5>#{{ forloop.counter }} (comment)</h5>
+                        </div>
+                        <div class='card-body'>
+                            <small><p class="card-subtitle mb-2 text-muted">{{response.2.sender}} at {{response.2.timestamp|date:"h:i A"}} on {{response.2.timestamp|date:"l, d F Y"}}</p></small>
+                            <p><strong>Comment : </strong>
+                            <p> {{response.2.comment}}</p>
+                            <!-- {% for key, val in response.2.items %}
+                                {% comment %} then show the key value pairs here  {% endcomment %}
+                                {% if key == 'node_id' or key == 'date_time' or key == 'user' %}
+                                    {% comment %} do nothing {% endcomment %}
+                                {%else%}
+                                    {% if val|is_list %}
+                                        <p><strong>{{key}}: </strong>
+                                            {% for v in val %}
+                                                {% if forloop.last %}
+                                                    {{v}}
+                                                {% else %}
+                                                    {{v}}, 
+                                                {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                    {% else %}
+                                        <p> <strong>{{key}}</strong>: {{val}}</p>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %} -->
+                            <!-- <a href="#" class='card-link'>Dummy</a> -->
+                        </div>
+                    </div>
+                    <br>
+                {% endif %}
             {% endfor %}
         </div>
         <div class='col-md-1'></div>

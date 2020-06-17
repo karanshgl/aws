@@ -1,12 +1,36 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block header %}
     <title>AWS | Forms | Fill Form </title>
 
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
 
+<script>
+    function showMessage(s) {
+            alertify.error(s);
+        }
+
+    $(document).ready( function () {
+        var fi_id = "{{ fi_id }}";
+        console.log(fi_id)
+        let dropdown = $('select#receiver');
+        dropdown.empty();
+
+        // Assume the list of users
+        var url = "{% url 'list_workflow_users' fi_id=1234 %}".replace('1234', fi_id)
+        $.get(url, function(data, status){
+            console.log(data);
+            $.each(data, function (index, value) {
+                dropdown.append($('<option></option>').attr('value', value.id).text(value.username));
+            });
+        });
+
+        // var user_list = [{'id': 1, 'username': 'sodhi'}, {'id': 2, 'username': 'somitra'}, {'id': 3, 'username': 'skdas'}]
+        $(".modal-body #fi_id").val( fi_id );
+
+    });
+</script>
 {%endblock%}
 
 {% block content %}
@@ -15,7 +39,7 @@
         <div class='col-md-1'></div>
         <div class='col-md-10'>
             <br><br>
-            <form method='post' enctype='multipart/form-data'>
+            <form method='post' class='comment-form ' enctype='multipart/form-data'>
                 {% csrf_token %}
                 {{ section_html | safe }}
                 {% comment %} <input type='hidden' name='section_id' value={{ section_id }}>
@@ -34,5 +58,30 @@
         <div class='col-md-1'></div>
     </div>
 
+    <div class="row">
+        
+        <div class='col-md-1'></div>
+        <div class='col-md-10'>
+            <br><br>
+            <h4> Send back with comment </h4>
+                <form id = "comment-form" method="POST" action="{% url 'send_comment' %}" data-id="{{fi_id}}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" name="fi_id" id = "fi_id" value="">
+                        <label for receiver>Send comment to</label>
+                        <!-- <input class="form-control" type="text" name="receiver" id = "receiver" placeholder="Select the user"> -->
+                        <select class="form-control" type="text" name="receiver" id="receiver"></select>
+                        <br>
+                        <label for="comment">Enter comment</label>
+                        <textarea class="form-control" id="comment" name = "comment" rows="3" placeholder="enter the comment"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Send Comment</button>
+                    </div>
+                </form>
+            </div>
+            <div class='col-md-1'></div>
+    </div>
 
 {%endblock%}

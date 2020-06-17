@@ -311,6 +311,7 @@ def fi_respond(request, fi_id):
         context = {
             'section_html': section_html,
             'is_user_last_node': is_user_last_node,
+            'fi_id': fi_object.id,
         }
         return render(request, 'forms/fi_respond.html', context=context)
 

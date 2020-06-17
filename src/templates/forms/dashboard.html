@@ -3,31 +3,6 @@
 {% block header %}
 <title>AWS | Forms | Dashboard</title>
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
-<script>
-    function showMessage(s) {
-            alertify.error(s);
-        }
-
-    $(document).on("click", ".comment-modal", function () {
-        var fi_id = $(this).data('id');
-
-        let dropdown = $('select#receiver');
-        dropdown.empty();
-
-        // Assume the list of users
-        var url = "{% url 'list_workflow_users' fi_id=1234 %}".replace('1234', fi_id)
-        $.get(url, function(data, status){
-            console.log(data);
-            $.each(data, function (index, value) {
-                dropdown.append($('<option></option>').attr('value', value.id).text(value.username));
-            });
-        });
-
-        // var user_list = [{'id': 1, 'username': 'sodhi'}, {'id': 2, 'username': 'somitra'}, {'id': 3, 'username': 'skdas'}]
-        $(".modal-body #fi_id").val( fi_id );
-
-    });
-    </script>
 {%endblock%}
 {% block content %}
 <div class='row'>
@@ -49,7 +24,6 @@
                 <th class='styled-table'>Active</th> {# show the inactive ones at the bottom and actives on top #}
                 <th class='styled-table'>Respond</th>
                 <th class='styled-table'>Nudge</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
-                <th class='styled-table'>Comment</th> {# if any instance is pending with someone for a long time, this would be a way to send a gentle reminder#}
             </tr>
             {% for fi, cn in pending_with_me_form_instances %}
             <tr>
@@ -69,13 +43,6 @@
                 </td>
                 <td class='styled-table'>
                     <a href="{% url 'fi_nudge' fi_id=fi.id%}">Nudge</a>
-                </td>
-                <td class='styled-table'>
-                    {% if cn %}
-                    <a href="#" data-toggle="modal" data-target="#exampleModal" data-id="{{fi.id}}" class="comment-modal">Comment</a>
-                    {% else %}
-                    Comment
-                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -131,34 +98,5 @@
         <h4><a href="{% url 'fb_permitted' %}">Fill a new form</a></h4>
     </div>
     <div class='col-md-1'></div>
-</div>
-<!-- MODAL -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Send Comment</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id = "comment-form" method="POST" action="{% url 'send_comment' %}">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <input type="hidden" name="fi_id" id = "fi_id" value="">
-                    <label for receiver>Send comment to</label>
-                    <!-- <input class="form-control" type="text" name="receiver" id = "receiver" placeholder="Select the user"> -->
-                    <select class="form-control" type="text" name="receiver" id="receiver"></select>
-                    <br>
-                    <label for="comment">Enter comment</label>
-                    <textarea class="form-control" id="comment" name = "comment" rows="3" placeholder="enter the comment"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Send Comment</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 {%endblock%}

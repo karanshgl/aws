@@ -62,27 +62,6 @@
                             <small><p class="card-subtitle mb-2 text-muted">{{response.2.sender}} at {{response.2.timestamp|date:"h:i A"}} on {{response.2.timestamp|date:"l, d F Y"}}</p></small>
                             <p><strong>Comment : </strong>
                             <p> {{response.2.comment}}</p>
-                            <!-- {% for key, val in response.2.items %}
-                                {% comment %} then show the key value pairs here  {% endcomment %}
-                                {% if key == 'node_id' or key == 'date_time' or key == 'user' %}
-                                    {% comment %} do nothing {% endcomment %}
-                                {%else%}
-                                    {% if val|is_list %}
-                                        <p><strong>{{key}}: </strong>
-                                            {% for v in val %}
-                                                {% if forloop.last %}
-                                                    {{v}}
-                                                {% else %}
-                                                    {{v}}, 
-                                                {% endif %}
-                                            {% endfor %}
-                                        </p>
-                                    {% else %}
-                                        <p> <strong>{{key}}</strong>: {{val}}</p>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %} -->
-                            <!-- <a href="#" class='card-link'>Dummy</a> -->
                         </div>
                     </div>
                     <br>

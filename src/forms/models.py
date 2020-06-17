@@ -157,7 +157,7 @@ class FormInstance(models.Model):
     def add_response(self, data):
         #add meta information to the data
         data['date_time'] = datetime.datetime.now()
-        data['user'] = self.sender.user.email
+        #data['user'] = self.sender.user.email
         data['node_id'] = self.current_node.id
         data = qdict_to_dict(data)# convert q_dict to dict
         #get the doc from mongo

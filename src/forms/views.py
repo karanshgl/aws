@@ -9,7 +9,7 @@ import datetime
 import pytz
 
 from .forms import FormBlueprintForm
-from .models import FormBlueprint, FormInstance, FormNotification, FormInstanceHasComment
+from .models import FormBlueprint, FormInstance, FormNotification, FormInstanceHasComment, TeamHasBlueprintPersmission
 from employees.models import Profile
 from workflows.models import Workflow, Node
 from teams.models import TeamHasEmployees
@@ -112,11 +112,25 @@ def send_comment(request):
 
 @login_required
 def fb_all(request):
-    context ={
-        'form_blueprints':FormBlueprint.objects.all()
-    }
-    return render(request, 'forms/fb_all.html', context=context)
-
+    #check if the team of the user is present in TeamHasBlueprintPermissions
+    user_team=TeamHasEmployees.objects.get(employee=request.user.profile).team
+    try:
+        check=TeamHasBlueprintPersmission.objects.get(team = user_team)
+        if(check):
+            context ={
+                'form_blueprints':FormBlueprint.objects.all()
+            }
+            return render(request, 'forms/fb_all.html', context=context)
+        else:
+            context={
+                        'message': "Your team doesn't have permission to manage blueprints"
+                    }
+            return render(request, 'forms/redirect_to_dashboard.html', context = context)
+    except:
+        context={
+                        'message': "Your team doesn't have permission to manage blueprints"
+                    }
+        return render(request, 'forms/redirect_to_dashboard.html', context = context)
 @login_required
 def fb_edit(request, fb_id):#fb is for form blueprint
     fb_object = FormBlueprint.objects.get(pk=fb_id)

@@ -14,6 +14,7 @@ import datetime
 
 from .FormBlueprintParser import *
 from employees.models import Profile
+from teams.models import Team
 
 from .routing import get_node_user, get_workflow_user_list
 
@@ -282,3 +283,13 @@ class FormInstanceHasComment(models.Model):
 
     def __str__(self):
         return '{}: {} to {}'.format(self.form_instance, self.sender, self.receiver)
+
+class TeamHasBlueprintPersmission(models.Model):
+    # Teams which have permission to edit form blueprint
+
+    team = models.ForeignKey(Team, on_delete = models.CASCADE, null = False, blank = False)
+
+    def __str__(self):
+        return self.team.team_name
+
+

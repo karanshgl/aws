@@ -7,8 +7,8 @@ import collections
 # GET MODELS
 from .models import Workflow, Node
 from employees.models import Role, Profile
-from teams.models import Team
-
+from teams.models import Team, TeamHasEmployees
+from forms.models import TeamHasBlueprintPersmission, FormBlueprint
 
 
 # Create your views here.
@@ -91,4 +91,23 @@ def create_workflow(request):
 			}
 			return render(request, 'forms/redirect_to_dashboard.html', context = context)
 
-	return render(request, 'workflow/create.html',{})
+    #check if the team of the user is present in TeamHasBlueprintPermissions
+	user_team=TeamHasEmployees.objects.get(employee=request.user.profile).team
+	try:
+		check=TeamHasBlueprintPersmission.objects.get(team = user_team)
+		if(check):
+			context ={
+				'form_blueprints':FormBlueprint.objects.all()
+			}
+			return render(request, 'workflow/create.html',{})
+		else:
+			context={
+                        'message': "Your team doesn't have permission to manage blueprints"
+                    }
+			return render(request, 'forms/redirect_to_dashboard.html', context = context)
+	except:
+		context={
+                        'message': "Your team doesn't have permission to manage blueprints"
+                    }
+		return render(request, 'forms/redirect_to_dashboard.html', context = context)
+	

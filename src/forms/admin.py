@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import FormBlueprint, FormInstance, FormNotification, FormInstanceHasComment
+from .models import FormBlueprint, FormInstance, FormNotification, FormInstanceHasComment, TeamHasBlueprintPersmission
 # Register your models here.
 
 class FormBlueprintAdminModel(admin.ModelAdmin):
@@ -50,3 +50,14 @@ class FormInstanceCommentAdminModel(admin.ModelAdmin):
 		model = FormInstanceHasComment
 
 admin.site.register(FormInstanceHasComment, FormInstanceCommentAdminModel)
+
+
+class TeamHasBlueprintPersmissionAdminModel(admin.ModelAdmin):
+	""" Admin Model """
+
+	list_display = ("id",  "team")
+	search_fields =("user",  )
+	class Meta:
+		model = TeamHasBlueprintPersmission
+
+admin.site.register(TeamHasBlueprintPersmission, TeamHasBlueprintPersmissionAdminModel)
